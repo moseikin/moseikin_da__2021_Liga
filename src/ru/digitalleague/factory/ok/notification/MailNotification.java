@@ -1,21 +1,22 @@
 package ru.digitalleague.factory.ok.notification;
 
 
-import ru.digitalleague.factory.ok.RandomSample;
-import ru.digitalleague.factory.ok.Translated;
 import ru.digitalleague.factory.ok.User;
+import ru.digitalleague.factory.ok.notification.decorator.SimpleNotification;
 
 public class MailNotification implements Notification {
 
-    private final User user;
+    private final SimpleNotification simpleNotification;
 
-    public MailNotification(User user) {
-        this.user = user;
+    public MailNotification(SimpleNotification simpleNotification, int lang) {
+        this.simpleNotification = simpleNotification;
+        this.simpleNotification.setLang(lang);
     }
 
     public String getText() {
-        String sample = new RandomSample().getRandomSample();
-        return new Translated(sample, user).chooseNotification();
+
+        return String.format("Это сообщение на почту: %s \n" + simpleNotification.getText(), simpleNotification.getUser().getEmail()) ;
+
 
     }
 

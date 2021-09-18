@@ -1,20 +1,19 @@
 package ru.digitalleague.factory.ok.notification;
 
 
-import ru.digitalleague.factory.ok.RandomSample;
-import ru.digitalleague.factory.ok.Translated;
-import ru.digitalleague.factory.ok.User;
+import ru.digitalleague.factory.ok.notification.decorator.SimpleNotification;
 
 public class PhoneNotification implements Notification {
 
-    private final User user;
+    private final SimpleNotification simpleNotification;
 
-    public PhoneNotification(User user) {
-        this.user = user;
+    public PhoneNotification(SimpleNotification simpleNotification, int lang) {
+        this.simpleNotification = simpleNotification;
+        simpleNotification.setLang(lang);
+
     }
 
     public String getText() {
-        String sample = new RandomSample().getRandomSample();
-        return new Translated(sample, user).chooseNotification();
+        return String.format("Это на телефон: %s \n" + simpleNotification.getText(), simpleNotification.getUser().getPhone());
     }
 }
