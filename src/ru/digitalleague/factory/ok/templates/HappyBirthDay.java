@@ -1,15 +1,16 @@
-package ru.digitalleague.factory.ok;
+package ru.digitalleague.factory.ok.templates;
 
-public enum HappyBirthDayLanguages {
+public enum HappyBirthDay{
     DEFAULT ("Уважаемый, ", "поздравляем c днем рождения"),
     ENGLISH("Dear, ", "happy birthday"),
     CHINESE("親, ", "生日快樂");
 
 
-    HappyBirthDayLanguages(String dear, String happyBirthDay) {
+    HappyBirthDay(String dear, String happyBirthDay) {
         this.dear = dear;
         this.happyBirthDay = happyBirthDay;
     }
+
 
     private final String dear;
     private final String happyBirthDay;
@@ -21,4 +22,6 @@ public enum HappyBirthDayLanguages {
     public String getHappyBirthDay() {
         return happyBirthDay;
     }
+
+
 }

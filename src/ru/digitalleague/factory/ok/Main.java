@@ -5,20 +5,21 @@ import ru.digitalleague.factory.ok.notification.decorator.SimpleNotification;
 import ru.digitalleague.factory.ok.notification.factory.MailNotificationFactory;
 import ru.digitalleague.factory.ok.notification.factory.NotificationFactory;
 import ru.digitalleague.factory.ok.notification.factory.PhoneNotificationFactory;
+import ru.digitalleague.factory.ok.templates.HappyBirthDay;
 
 import java.util.*;
 
 public class Main {
-    private static final HappyBirthDayLanguages[] LANGUAGES = HappyBirthDayLanguages.values();
+    private static final HappyBirthDay[] TEMPLATE = HappyBirthDay.values();
 
     public static void main(String[] args) {
 
         printPossibleLocales();
-        int chosenLang = chooseLanguage(LANGUAGES.length);
+        int chosenLang = chooseLanguage(TEMPLATE.length);
 
         User user = new User("Пользователь", "user@gmail.com", "+79522668105");
 
-        SimpleNotification simpleNotification = new SimpleNotification(user);
+        SimpleNotification simpleNotification = new SimpleNotification(user, TEMPLATE);
 
         List<NotificationFactory> notificationFactories = new ArrayList<>();
         notificationFactories.add(new MailNotificationFactory());
@@ -27,12 +28,11 @@ public class Main {
         for(NotificationFactory factory : notificationFactories) {
             sendNotification(factory.makeNotification(simpleNotification, chosenLang));
         }
-
     }
 
     private static void printPossibleLocales() {
-        for (int i = 0; i < LANGUAGES.length; i++) {
-            System.out.print(i + " " + LANGUAGES[i].toString().toLowerCase(Locale.ROOT) + " ");
+        for (int i = 0; i < TEMPLATE.length; i++) {
+            System.out.print(i + " " + TEMPLATE[i].toString().toLowerCase(Locale.ROOT) + " ");
         }
         System.out.println("\n Выберите язык:  ");
     }
@@ -42,7 +42,7 @@ public class Main {
             try {
                 Scanner scanner = new Scanner(System.in);
                 int chosenLang = scanner.nextInt();
-                if (chosenLang > 0 & chosenLang < languagesCount) {
+                if (chosenLang >= 0 & chosenLang < languagesCount) {
                     return chosenLang;
                 } else wrongInput();
             } catch (InputMismatchException e) {

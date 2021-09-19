@@ -14,6 +14,6 @@ public class PhoneNotification implements Notification {
     }
 
     public String getText() {
-        return String.format("Это на телефон: %s \n" + simpleNotification.getText(), simpleNotification.getUser().getPhone());
+        return String.format("\n (Это на телефон: %s) \n" + simpleNotification.getText(), simpleNotification.getUser().getPhone());
     }
 }

@@ -1,22 +1,27 @@
 package ru.digitalleague.factory.ok.notification.decorator;
 
-import ru.digitalleague.factory.ok.HappyBirthDayLanguages;
 import ru.digitalleague.factory.ok.User;
 import ru.digitalleague.factory.ok.notification.Notification;
+import ru.digitalleague.factory.ok.templates.HappyBirthDay;
 
 public class SimpleNotification implements Notification {
     private final User user;
-    private final HappyBirthDayLanguages[] languages;
+    private final HappyBirthDay[] template;
+
     private int lang;
 
-    public SimpleNotification(User user) {
+
+    // По-хорошему, вместо HappyBirthDay[] на вход нужно принимать какой-то обобщенный Enum массив
+    //  не соображу, что тут можно сделать
+    public SimpleNotification(User user, HappyBirthDay[] template) {
         this.user = user;
-        languages = HappyBirthDayLanguages.values();
+        this.template = template;
     }
+
 
     @Override
     public String getText() {
-        return languages[lang].getDear() + user.getName() + ", " + languages[lang].getHappyBirthDay();
+        return template[lang].getDear() + user.getName() + ", " + template[lang].getHappyBirthDay();
     }
 
     public void setLang(int lang) {

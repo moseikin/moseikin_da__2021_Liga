@@ -15,7 +15,7 @@ public class MailNotification implements Notification {
 
     public String getText() {
 
-        return String.format("Это сообщение на почту: %s \n" + simpleNotification.getText(), simpleNotification.getUser().getEmail()) ;
+        return String.format("\n (Это сообщение на почту: %s) \n" + simpleNotification.getText(), simpleNotification.getUser().getEmail()) ;
 
 
     }
