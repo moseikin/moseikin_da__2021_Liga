@@ -18,3 +18,9 @@ out/
 *.iml
 *.ipr
 *.iws
+
+gradle
+build.gradle
+gradlew
+gradlew.bat
+settings.gradle
