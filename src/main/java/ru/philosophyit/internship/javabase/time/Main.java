@@ -22,7 +22,9 @@ public class Main {
 
 
     private static void writeDateVariables(){
+
         calendar.set(Calendar.DAY_OF_MONTH, 1);
+
         int currentMonth = calendar.get(Calendar.MONTH);
         daysAmountInMonth = calendar.getActualMaximum(Calendar.DATE);
         firstDayOfMonth = calendar.get(Calendar.DAY_OF_WEEK);
@@ -46,6 +48,7 @@ public class Main {
                 currentDay = 1;
                 System.out.println("\n");
             }
+
             if (i == 1 && currentDay != 1) {
                 String daysStartsFrom = "%" + (4 * currentDay) + "s";
                 System.out.printf(daysStartsFrom, i);
@@ -62,7 +65,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         try {
             int numberInputted = scanner.nextInt();
-            if (numberInputted < 1 | numberInputted > 12) throw new OutThisYearException();
+            if (numberInputted < 1 || numberInputted > 12) throw new OutThisYearException();
 
             calendar.set(Calendar.MONTH, numberInputted - 1);
             System.out.println("\n\n\n");

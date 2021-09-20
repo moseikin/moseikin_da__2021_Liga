@@ -6,9 +6,16 @@ import java.util.concurrent.Executors;
 public class Main {
 
     // Почему при вызове executorService.shutdown(); программа продолжает свое исполнение ?
+            // Если поток в методе startSomeDaemon() будет помечен как Daemon, то после того,
+            // как цикл совершит num итераций, вызов executorService.shutdown() остановит программу
+            // Daemon-поток не выполняет самостоятельных задач и не может препятствовать остановке JVM
     // Почему если убрать строчку 28 (executorService.shutdown()) программа не прекратит свое исполнение
     // даже после завершения всех тасок в executorService ?
+            // Цикл в методе startSomeDaemon() является бесконечным
     // Почему при работе тасок executorService в консоль в секунду попадает всего 4 сообщения, тогда как тасок в executorService - 16?
+            // Потому что в newFixedThreadPool(4) определено количество потоков (4).
+            // Секундная задержка происходит одновременно в этих четырех потоках, каждый из них выводит в консоль
+            // свое captureId
     public static void main(String[] args) {
         startSomeDaemon();
 
@@ -19,7 +26,7 @@ public class Main {
             int captureId = i;
             executorService.submit(() -> {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     return;
@@ -48,7 +55,7 @@ public class Main {
             while (true) {
                 System.err.println(t++);
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
