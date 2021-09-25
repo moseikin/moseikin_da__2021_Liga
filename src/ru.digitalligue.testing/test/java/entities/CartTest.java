@@ -24,6 +24,11 @@ class CartTest {
     }
 
     @Test
+    void user_NotNull(){
+        assertNotNull(user);
+    }
+
+    @Test
     void addToCart_Product_New_In_Cart() {
         cart.addToCart("Товар3", 2);
         int expected = 2;

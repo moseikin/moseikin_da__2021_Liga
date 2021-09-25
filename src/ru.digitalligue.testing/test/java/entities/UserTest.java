@@ -1,6 +1,5 @@
 package entities;
 
-import junit.framework.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
