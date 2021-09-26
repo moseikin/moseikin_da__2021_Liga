@@ -1,12 +1,16 @@
 package entities.interfaces;
 
+import java.util.Scanner;
+
 public interface DoShopping {
 
     void createNewUser();
 
     void printCatalog();
 
-    void addToCart();
+    void chooseProduct();
+
+    void chooseQuantity(String productChosen);
 
     void doContinueCarting();
 

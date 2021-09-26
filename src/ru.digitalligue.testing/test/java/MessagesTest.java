@@ -126,6 +126,4 @@ class MessagesTest {
         assertEquals(MainTest.removeSeparators("Ошибка ввода"), MainTest.removeSeparators(outContent.toString()));
     }
 
-    // удаляет line separators
-
 }

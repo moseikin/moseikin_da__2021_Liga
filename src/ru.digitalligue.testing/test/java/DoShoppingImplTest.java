@@ -1,35 +1,27 @@
+import entities.Cart;
+import entities.Goods;
 import entities.User;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import java.io.*;
-
-import java.nio.ByteBuffer;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Scanner;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 class DoShoppingImplTest  {
 
-    private ByteArrayOutputStream testOut = new ByteArrayOutputStream();
-    private final int test = 1;
-    private byte[] bytes;
-    private ByteArrayInputStream testIn;
+    private Cart cart;
     private static final User user = new User("newUser", "qwerty@gmail.com");
-    private final DoShoppingImpl doShopping = new DoShoppingImpl();
+    private DoShoppingImpl doShopping;
 
-//    @InjectMocks
-//    private DoShoppingImpl doShopping;
 
     @BeforeEach
     void setUp(){
-        System.setOut(new PrintStream(testOut));
-        bytes = ByteBuffer.allocate(4).putInt(test).array();
-        testIn = new ByteArrayInputStream(bytes);
-        System.setIn(testIn);
+        cart = new Cart();
+        doShopping = new DoShoppingImpl(new Scanner(String.valueOf(1)));
     }
 
     @Test
@@ -43,14 +35,45 @@ class DoShoppingImplTest  {
     }
 
     @Test
-    void testAddToCart(){
-        assertThrows(NoSuchElementException.class, doShopping::addToCart);
+    void testChooseProduct(){
+        doShopping.printCatalog();
+        assertThrows(NoSuchElementException.class, ()->doShopping.chooseProduct());
     }
 
     @Test
-    public void testDoContinueCarting(){
-        assertThrows(NoSuchElementException.class, doShopping::doContinueCarting);
+    void testChooseProduct_NoSuchElementException(){
+        assertThrows(NoSuchElementException.class, ()->doShopping.chooseProduct());
     }
+
+    @Test
+    void testChooseQuantity(){
+        doShopping.printCatalog();
+        Goods goods = new Goods();
+        Map.Entry<String,Integer> entry = goods.getCatalog().entrySet().iterator().next();
+        doShopping.chooseQuantity(entry.getKey());
+    }
+
+    @Test
+    void testChooseQuantity_NullPointerException(){
+        String product = "someProduct";
+        assertThrows(NullPointerException.class, ()->doShopping.chooseQuantity(product));
+    }
+
+    @Test
+    public void testDoContinueCarting_NoSuchElementException(){
+        assertThrows(NoSuchElementException.class, ()->doShopping.doContinueCarting());
+    }
+
+
+    @Test
+    public void testDoContinueCarting(){
+        DoShoppingImpl doShopping1 = new DoShoppingImpl(new Scanner(String.valueOf(2)));
+
+        doShopping1.createNewUser();
+        cart.addToCart("product", 3);
+        doShopping1.doContinueCarting();
+    }
+
 
     @Test
     void testGetUser(){
@@ -58,5 +81,6 @@ class DoShoppingImplTest  {
         assertEquals(MainTest.removeSeparators(user.toString()),
                 MainTest.removeSeparators(doShopping.getUser().toString()));
     }
+
 
 }

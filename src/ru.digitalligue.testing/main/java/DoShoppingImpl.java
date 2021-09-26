@@ -9,10 +9,15 @@ import messages.Messages;
 import java.util.*;
 
 public class DoShoppingImpl implements DoShopping {
+    private final Scanner scanner;
     private static final Goods goods = new Goods();
     private static final Cart CART = new Cart();
-    private Scanner scanner;
     private User user;
+    int inCart;
+
+    public DoShoppingImpl(Scanner scanner) {
+        this.scanner = scanner;
+    }
 
     public User getUser() {
         return user;
@@ -53,14 +58,12 @@ public class DoShoppingImpl implements DoShopping {
     }
 
     @Override
-    public void addToCart() {
+    public void chooseProduct() {
         String productChosen;
-        int inCart = 0;
+        inCart = 0;
         while (true) {
             try {
                 Messages.inputProductNumberMessage();
-                scanner = new Scanner(System.in);
-
                 int productNumber = scanner.nextInt();
                 if (productNumber > 0 & productNumber <= goodsList.size()) {
                     productChosen = goodsList.get(productNumber - 1);
@@ -77,10 +80,14 @@ public class DoShoppingImpl implements DoShopping {
             }
         }
 
+        chooseQuantity(productChosen);
+    }
+
+    @Override
+    public void chooseQuantity(String productChosen) {
         while (true) {
             try {
                 Messages.inputQuantityMessage();
-                scanner = new Scanner(System.in);
                 int quantity = scanner.nextInt();
 
                 if (quantity > 0 & quantity <= goods.getCatalog().get(productChosen) - inCart) {
@@ -102,11 +109,10 @@ public class DoShoppingImpl implements DoShopping {
         while (true) {
             try {
                 Messages.showChooseMessage();
-                scanner = new Scanner(System.in);
                 int choose = scanner.nextInt();
                 if (choose == 1) {
                     printCatalog();
-                    addToCart();
+                    chooseProduct();
                 } else if (choose == 2) {
                     Order order = new OrderImpl();
                     order.makeOrder(CART);
