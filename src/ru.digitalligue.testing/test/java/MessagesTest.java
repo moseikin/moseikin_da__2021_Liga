@@ -47,40 +47,40 @@ class MessagesTest {
     @Test
     void notEnoughMessage() {
         Messages.notEnoughMessage();
-        assertEquals(removeSeparators("Такого количества нет в наличии"), removeSeparators(outContent.toString()));
+        assertEquals(MainTest.removeSeparators("Такого количества нет в наличии"), MainTest.removeSeparators(outContent.toString()));
     }
 
     @Test
     void addedToCartMessage() {
         Messages.addedToCartMessage();
         String expected = "Добавлено в корзину";
-        assertEquals(removeSeparators(expected), removeSeparators(outContent.toString()));
+        assertEquals(MainTest.removeSeparators(expected), MainTest.removeSeparators(outContent.toString()));
     }
 
     @Test
     void showCartMessage() {
         Cart cart = new Cart();
         Messages.showCartMessage(cart);
-        assertEquals(removeSeparators(cart.toString()), removeSeparators(outContent.toString()));
+        assertEquals(MainTest.removeSeparators(cart.toString()), MainTest.removeSeparators(outContent.toString()));
     }
 
     @Test
     void showChooseMessage() {
         Messages.showChooseMessage();
         String expected = "\n 1. Продолжить покупки; \n 2. Оформить заказ";
-        assertEquals(removeSeparators(expected), removeSeparators(outContent.toString()));
+        assertEquals(MainTest.removeSeparators(expected), MainTest.removeSeparators(outContent.toString()));
     }
 
     @Test
     void noSuchProductMessage() {
         Messages.noSuchProductMessage();
-        assertEquals(removeSeparators("Такого товара нет"), removeSeparators(outContent.toString()));
+        assertEquals(MainTest.removeSeparators("Такого товара нет"), MainTest.removeSeparators(outContent.toString()));
     }
 
     @Test
     void catalogMessage() {
         Messages.catalogMessage();
-        assertEquals(removeSeparators("Каталог"), removeSeparators(outContent.toString()));
+        assertEquals(MainTest.removeSeparators("Каталог"), MainTest.removeSeparators(outContent.toString()));
     }
 
     @Test
@@ -90,7 +90,7 @@ class MessagesTest {
 
         Messages.productLineMessage(number, product, available);
         String expected = String.format("%s: %s в наличии: %s \n", number, product, available);
-        assertEquals(removeSeparators(expected), removeSeparators(outContent.toString()));
+        assertEquals(MainTest.removeSeparators(expected), MainTest.removeSeparators(outContent.toString()));
     }
 
     @Test
@@ -98,36 +98,34 @@ class MessagesTest {
 
         Messages.ableToBuyMessage(product, count);
         String expected = String.format("Выбрано: %s. Доступно для заказа: %s \n", product, count);
-        assertEquals(removeSeparators(expected), removeSeparators(outContent.toString()));
+        assertEquals(MainTest.removeSeparators(expected), MainTest.removeSeparators(outContent.toString()));
     }
 
     @Test
     void printUserMessage() {
         User user = new User("qaz", "qwerty@gmail.com");
         Messages.printUserMessage(user.toString());
-        assertEquals(removeSeparators(user.toString()), removeSeparators(outContent.toString()));
+        assertEquals(MainTest.removeSeparators(user.toString()), MainTest.removeSeparators(outContent.toString()));
     }
 
     @Test
     void newOrderTest(){
         Messages.newOrder();
-        assertEquals(removeSeparators("\n Новый заказ:"), removeSeparators(outContent.toString()));
+        assertEquals(MainTest.removeSeparators("\n Новый заказ:"), MainTest.removeSeparators(outContent.toString()));
     }
 
     @Test
     void printOrderTest() {
         Messages.printOrder(product, count);
-        assertEquals(removeSeparators(product + " " + count), removeSeparators(outContent.toString()));
+        assertEquals(MainTest.removeSeparators(product + " " + count), MainTest.removeSeparators(outContent.toString()));
     }
 
     @Test
     void wrongChoiceTest(){
         Messages.wrongChoice();
-        assertEquals(removeSeparators("Ошибка ввода"), removeSeparators(outContent.toString()));
+        assertEquals(MainTest.removeSeparators("Ошибка ввода"), MainTest.removeSeparators(outContent.toString()));
     }
 
     // удаляет line separators
-    private String removeSeparators(String s) {
-        return s.replaceAll("\n", "").replaceAll("\r", "");
-    }
+
 }

@@ -1,14 +1,13 @@
-import org.junit.jupiter.api.Test;
-import org.powermock.api.mockito.PowerMockito;
 
+import org.junit.jupiter.api.Test;
+
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class MainTest {
-    private Main main = PowerMockito.spy(new Main());
 
-//    @Test
-//    void mainTest() throws Exception {
-////        PowerMockito.verifyPrivate(main).invoke("newUser");
-//    }
-
+    public static String removeSeparators(String s) {
+        return s.replaceAll("\n", "").replaceAll("\r", "");
+    }
 
 }

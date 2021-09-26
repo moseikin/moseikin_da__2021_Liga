@@ -12,18 +12,23 @@ public class DoShoppingImpl implements DoShopping {
     private static final Goods goods = new Goods();
     private static final Cart CART = new Cart();
     private Scanner scanner;
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+
 
     // костыль для того, чтобы связать порядковый номер товара из каталога в консоли с этим товаром
     private static final List<String> goodsList = new ArrayList<>();
 
     @Override
     public void createNewUser() {
-        User user = new User("newUser", "qwerty@gmail.com");
+        user = new User("newUser", "qwerty@gmail.com");
         Messages.printUserMessage(user.toString());
         CART.addUser(user);
         Messages.showCartMessage(CART);
-
-        printCatalog();
     }
 
     @Override
@@ -45,9 +50,6 @@ public class DoShoppingImpl implements DoShopping {
                 goodsList.remove(item.getKey());
             }
         }
-
-        addToCart();
-
     }
 
     @Override
@@ -58,8 +60,9 @@ public class DoShoppingImpl implements DoShopping {
             try {
                 Messages.inputProductNumberMessage();
                 scanner = new Scanner(System.in);
+
                 int productNumber = scanner.nextInt();
-                if (productNumber > 0 & productNumber <= goodsList.size() ) {
+                if (productNumber > 0 & productNumber <= goodsList.size()) {
                     productChosen = goodsList.get(productNumber - 1);
                     if (CART.getCart().get(productChosen) != null) {
                         inCart = CART.getCart().get(productChosen);
@@ -92,10 +95,9 @@ public class DoShoppingImpl implements DoShopping {
                 Messages.notEnoughMessage();
             }
         }
-
-        doContinueCarting();
     }
 
+    @Override
     public void doContinueCarting() {
         while (true) {
             try {

@@ -1,105 +1,62 @@
-import entities.Cart;
-import entities.Goods;
 import entities.User;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.io.*;
+
+import java.nio.ByteBuffer;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class DoShoppingImplTest  {
-    private static Cart cart = new Cart();
-    private DoShoppingImpl doShopping = new DoShoppingImpl();
-    private static Goods goods = new Goods();
-    private static int quantity = 2;
-    private static User user = new User("qaz", "qwerty@gmail.com");
-    private static String product = "Картина";
-    private static String notProduct = "Автомобиль";
-    private static List<String> goodsList = new ArrayList<>();
 
-    @BeforeAll
-    static void setUp(){
-        goodsList.addAll(goods.getCatalog().keySet());
-//        cart.addToCart(notProduct, quantity);
-    }
+    private ByteArrayOutputStream testOut = new ByteArrayOutputStream();
+    private final int test = 1;
+    private byte[] bytes;
+    private ByteArrayInputStream testIn;
+    private static final User user = new User("newUser", "qwerty@gmail.com");
+    private final DoShoppingImpl doShopping = new DoShoppingImpl();
 
+//    @InjectMocks
+//    private DoShoppingImpl doShopping;
 
-    @Test
-    void testCreateNewUser() {
-
-        cart.addUser(user);
-        assertEquals(user, cart.getUser());
+    @BeforeEach
+    void setUp(){
+        System.setOut(new PrintStream(testOut));
+        bytes = ByteBuffer.allocate(4).putInt(test).array();
+        testIn = new ByteArrayInputStream(bytes);
+        System.setIn(testIn);
     }
 
     @Test
-    void testPrintCatalog_GoodList_NotEmpty(){
-
-
-        assertFalse(goods.getCatalog().isEmpty());
-    }
-
-
-
-    @Test
-    void testPrintCatalog_CartValue_Null(){
-        assertNull(cart.getCart().get(notProduct));
+    void testCreateNewUser(){
+        doShopping.createNewUser();
     }
 
     @Test
-    void testPrintCatalog_CartValue_NotNull(){
-        cart.addToCart(product, quantity);
-        assertNotNull(cart.getCart().get(product));
+    void testPrintCatalog(){
+        doShopping.printCatalog();
     }
 
     @Test
-    void testPrintCatalog_Available_MoreThanZero(){
-
-        int quantity = 0;
-        cart.addToCart(product, quantity);
-        int available = goods.getCatalog().get(product) - cart.getCart().get(product);
-        assertNotEquals(0, available);
+    void testAddToCart(){
+        assertThrows(NoSuchElementException.class, doShopping::addToCart);
     }
 
     @Test
-    void testAddToCart_ProductInBounds(){
-        int productNumber = 3;
-        assertTrue(productNumber < goodsList.size());
+    public void testDoContinueCarting(){
+        assertThrows(NoSuchElementException.class, doShopping::doContinueCarting);
     }
 
     @Test
-    void testAddToCart_Product_NotInBounds(){
-        int productNumber = 10;
-        assertFalse(productNumber < goodsList.size());
+    void testGetUser(){
+        doShopping.createNewUser();
+        assertEquals(MainTest.removeSeparators(user.toString()),
+                MainTest.removeSeparators(doShopping.getUser().toString()));
     }
 
-
-
-
-
-//    @org.junit.Test(expected = InputMismatchException.class)
-//    public void testAddToCart_ThrowsException(){
-//        String data = "What_I_could_put_in_console";
-//        InputStream stdin = System.in;
-//        System.setIn(new ByteArrayInputStream(data.getBytes()));
-//        Scanner scanner = new Scanner(System.in);
-//        System.setIn(stdin);
-//
-////        String input = "any string";
-////        System.setIn(new ByteArrayInputStream(input.getBytes()));
-////        Scanner scanner = new Scanner(System.in);
-//    }
-
-
-
-
-
-    @Test
-    void testDoContinueCarting() {
-    }
 }
