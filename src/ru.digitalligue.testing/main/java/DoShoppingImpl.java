@@ -77,6 +77,7 @@ public class DoShoppingImpl implements DoShopping {
                 }
             } catch (InputMismatchException e) {
                 Messages.noSuchProductMessage();
+                scanner.nextLine();
             }
         }
 
@@ -100,6 +101,7 @@ public class DoShoppingImpl implements DoShopping {
                 }
             } catch (InputMismatchException e) {
                 Messages.notEnoughMessage();
+                scanner.nextLine();
             }
         }
     }
@@ -120,6 +122,7 @@ public class DoShoppingImpl implements DoShopping {
                 }
             } catch (InputMismatchException e) {
                 Messages.wrongChoice();
+                scanner.nextLine();
             }
 
         }

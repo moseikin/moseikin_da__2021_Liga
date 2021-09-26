@@ -41,6 +41,14 @@ class DoShoppingImplTest  {
     }
 
     @Test
+    void testChooseProduct_NoSuchProduct_NoSuchElementException(){
+        doShopping = new DoShoppingImpl(new Scanner(String.valueOf(0)));
+        doShopping.printCatalog();
+        assertThrows(NoSuchElementException.class, ()->doShopping.chooseProduct());
+    }
+
+
+    @Test
     void testChooseProduct_NoSuchElementException(){
         assertThrows(NoSuchElementException.class, ()->doShopping.chooseProduct());
     }
@@ -54,9 +62,27 @@ class DoShoppingImplTest  {
     }
 
     @Test
+    void testChooseQuantity_NotEnough_NoSuchElementException(){
+        doShopping.printCatalog();
+        Goods goods = new Goods();
+        doShopping = new DoShoppingImpl(new Scanner(String.valueOf(0)));
+        Map.Entry<String,Integer> entry = goods.getCatalog().entrySet().iterator().next();
+        assertThrows(NoSuchElementException.class, ()->doShopping.chooseQuantity(entry.getKey()));
+    }
+
+    @Test
     void testChooseQuantity_NullPointerException(){
         String product = "someProduct";
         assertThrows(NullPointerException.class, ()->doShopping.chooseQuantity(product));
+    }
+
+    @Test
+    void testChooseQuantity_InputMismatch_NoSuchElementException(){
+        doShopping.printCatalog();
+        Goods goods = new Goods();
+        doShopping = new DoShoppingImpl(new Scanner("string"));
+        Map.Entry<String,Integer> entry = goods.getCatalog().entrySet().iterator().next();
+        assertThrows(NoSuchElementException.class, ()->doShopping.chooseQuantity(entry.getKey()));
     }
 
     @Test
@@ -68,10 +94,17 @@ class DoShoppingImplTest  {
     @Test
     public void testDoContinueCarting(){
         DoShoppingImpl doShopping1 = new DoShoppingImpl(new Scanner(String.valueOf(2)));
-
         doShopping1.createNewUser();
         cart.addToCart("product", 3);
         doShopping1.doContinueCarting();
+    }
+
+    @Test
+    public void testDoContinueCarting_InputMismatch_NoSuchElementException(){
+        DoShoppingImpl doShopping1 = new DoShoppingImpl(new Scanner("string"));
+        doShopping1.createNewUser();
+        cart.addToCart("product", 3);
+        assertThrows(NoSuchElementException.class, doShopping1::doContinueCarting);
     }
 
 
