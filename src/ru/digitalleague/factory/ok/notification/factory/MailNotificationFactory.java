@@ -6,8 +6,20 @@ import ru.digitalleague.factory.ok.notification.MailNotification;
 import ru.digitalleague.factory.ok.notification.decorator.SimpleNotification;
 
 public class MailNotificationFactory implements NotificationFactory {
-    public Notification makeNotification(SimpleNotification simpleNotification, int lang) {
-        return new MailNotification(simpleNotification, lang);
+    MailNotification mailNotification;
+
+    public MailNotificationFactory(User user) {
+        mailNotification = new MailNotification(user);
     }
+
+    public Notification makeNotification() {
+        return mailNotification;
+    }
+
+    @Override
+    public String getSource() {
+        return "email";
+    }
+
 
 }

@@ -5,19 +5,18 @@ import ru.digitalleague.factory.ok.User;
 import ru.digitalleague.factory.ok.notification.decorator.SimpleNotification;
 
 public class MailNotification implements Notification {
+    private final User user;
 
-    private final SimpleNotification simpleNotification;
+    public MailNotification(User user) {
+        this.user = user;
+    }
 
-    public MailNotification(SimpleNotification simpleNotification, int lang) {
-        this.simpleNotification = simpleNotification;
-        this.simpleNotification.setLang(lang);
+    public String getSource(){
+        return "Email";
     }
 
     public String getText() {
-
-        return String.format("\n (Это сообщение на почту: %s) \n" + simpleNotification.getText(), simpleNotification.getUser().getEmail()) ;
-
-
+        return String.format("\n (Это сообщение на почту: %s) \n", user.getEmail());
     }
 
 }

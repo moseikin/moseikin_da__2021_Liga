@@ -5,5 +5,7 @@ import ru.digitalleague.factory.ok.notification.Notification;
 import ru.digitalleague.factory.ok.notification.decorator.SimpleNotification;
 
 public interface NotificationFactory {
-    Notification makeNotification(SimpleNotification simpleNotification, int lang);
+    Notification makeNotification();
+
+    String getSource();
 }

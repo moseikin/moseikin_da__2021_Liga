@@ -1,19 +1,22 @@
 package ru.digitalleague.factory.ok.notification;
 
 
-import ru.digitalleague.factory.ok.notification.decorator.SimpleNotification;
+import ru.digitalleague.factory.ok.User;
 
 public class PhoneNotification implements Notification {
+    private final User user;
 
-    private final SimpleNotification simpleNotification;
 
-    public PhoneNotification(SimpleNotification simpleNotification, int lang) {
-        this.simpleNotification = simpleNotification;
-        simpleNotification.setLang(lang);
-
+    public PhoneNotification(User user) {
+        this.user = user;
     }
 
     public String getText() {
-        return String.format("\n (Это на телефон: %s) \n" + simpleNotification.getText(), simpleNotification.getUser().getPhone());
+        return String.format("\n (Это на телефон: %s) \n", user.getPhone());
+    }
+
+    @Override
+    public String getSource() {
+        return "телефон";
     }
 }

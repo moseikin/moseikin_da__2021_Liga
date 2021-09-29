@@ -6,7 +6,18 @@ import ru.digitalleague.factory.ok.notification.PhoneNotification;
 import ru.digitalleague.factory.ok.notification.decorator.SimpleNotification;
 
 public class PhoneNotificationFactory implements NotificationFactory {
-    public Notification makeNotification(SimpleNotification simpleNotification, int lang) {
-        return new PhoneNotification(simpleNotification, lang);
+    private final PhoneNotification phoneNotification;
+
+    public PhoneNotificationFactory(User user) {
+        phoneNotification = new PhoneNotification(user);
+    }
+
+    public Notification makeNotification() {
+        return phoneNotification;
+    }
+
+    @Override
+    public String getSource() {
+        return phoneNotification.getSource();
     }
 }
