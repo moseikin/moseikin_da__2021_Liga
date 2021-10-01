@@ -27,11 +27,24 @@ CREATE TABLE Student (
 	
 CREATE TABLE Subject (
 	id INTEGER PRIMARY KEY,
-	teacher_id INTEGER,
-	student_id INTEGER,
-	title VARCHAR(100) NULL,
-	
-	FOREIGN KEY (teacher_id) REFERENCES Teacher(id),
-	FOREIGN KEY (student_id) REFERENCES Student(id));
-	
+	title VARCHAR(100) NULL);
+
+
+CREATE TABLE Student_Subject (
+     id INTEGER PRIMARY KEY,
+     student_id INTEGER,
+     subject_id INTEGER,
+     title VARCHAR(100) NULL,
+
+     FOREIGN KEY (student_id) REFERENCES Student(id),
+     FOREIGN KEY (subject_id) REFERENCES Subject(id));
+
+CREATE TABLE Teacher_Subject (
+     id INTEGER PRIMARY KEY,
+     teacher_id INTEGER,
+     subject_id INTEGER,
+     title VARCHAR(100) NULL,
+
+     FOREIGN KEY (teacher_id) REFERENCES Teacher(id),
+     FOREIGN KEY (subject_id) REFERENCES Subject(id));
 
