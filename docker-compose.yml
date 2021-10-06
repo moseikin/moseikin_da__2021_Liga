@@ -3,7 +3,7 @@ version: "3"
 services:
   postgres:
     image: postgres:13.4
-    container_name: pg_cont
+    container_name: school_cont
     volumes:
       - ./pg_data:/var/lib/postgresql/data
     environment:
@@ -13,4 +13,4 @@ services:
       PG_DATA: /var/lib/postgresql/data/db-files/
     ports:
       - "5432:5432"
-    restart: always
+#    restart: always

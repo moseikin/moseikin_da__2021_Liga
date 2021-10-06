@@ -1,0 +1,1 @@
+INSERT INTO student_subject(student_id, subject_title) VALUES (1, 'Angliiskiy')
