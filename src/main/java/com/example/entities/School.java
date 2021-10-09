@@ -18,7 +18,7 @@ public class School {
     @Column(name = "school_number")
     private Long number;
 
-    @Column(name = "address")
+    @Column(name = "address", length = 100)
     private String address;
 
     @OneToMany(mappedBy = "school", fetch = FetchType.LAZY)

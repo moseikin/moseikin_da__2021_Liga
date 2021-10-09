@@ -20,7 +20,7 @@ public class UserPosts {
 //    @Column(name = "id")
     private Long id;
 
-    @Column(name = "text")
+    @Column(name = "text", length = 2048)
     private String text;
 
     @ManyToOne

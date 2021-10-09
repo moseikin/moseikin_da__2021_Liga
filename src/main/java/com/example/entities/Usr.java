@@ -22,10 +22,10 @@ public class Usr {
     @Column(name = "usr_id")
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", length = 20)
     private String name;
 
-    @Column(name = "lastname")
+    @Column(name = "lastname", length = 20)
     private String lastName;
 
     @Column(name = "age")
@@ -38,11 +38,13 @@ public class Usr {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usr")
     private List<UserPosts> userPostsList = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usr")
+    private List<Friends> friendsList = new ArrayList<>();
+
     public Usr(String name, String lastName, Integer age) {
         this.name = name;
         this.lastName = lastName;
         this.age = age;
-
     }
 
     @Override

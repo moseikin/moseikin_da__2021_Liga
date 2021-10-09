@@ -32,6 +32,11 @@ public class UserService {
         }
     }
 
+    public static void deleteUser(){
+        Usr usr = usersJpaDao.usrList().get(0);
+        usersJpaDao.deleteUsr(usr);
+    }
+
     public static void deleteAllUsers(){
         usersJpaDao.usrList().forEach(usersJpaDao::deleteUsr);
     }

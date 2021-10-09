@@ -7,7 +7,7 @@
         <class>com.example.entities.Usr</class>
         <class>com.example.entities.School</class>
         <class>com.example.entities.UserPosts</class>
-        <class>com.example.entities.UserSchool</class>
+        <class>com.example.entities.Friends</class>
 
 
         <properties>

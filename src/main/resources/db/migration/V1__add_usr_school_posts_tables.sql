@@ -11,21 +11,10 @@ CREATE TABLE IF NOT EXISTS usr(
 
   FOREIGN KEY (school_number) REFERENCES all_schools(school_number));
 
--- CREATE TABLE IF NOT EXISTS usr_school(
---     PRIMARY KEY (school_number, usr_id),
---      school_number int8,
---      usr_id int8,
---
---      FOREIGN KEY (school_number) REFERENCES all_schools(school_number),
---      FOREIGN KEY (usr_id) REFERENCES usr(usr_id));
-
-
-
-
 
 CREATE TABLE IF NOT EXISTS user_posts(
     id int8 PRIMARY KEY,
     text VARCHAR(2048) NOT NULL,
-    usr_id int8,
+    usr_id int8 NOT NULL ,
 
     FOREIGN KEY (usr_id) REFERENCES usr(usr_id));
