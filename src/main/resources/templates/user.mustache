@@ -1,0 +1,17 @@
+<html lang="ru">
+<head><title></title></head>
+<body>
+<h2>POST-запрос на добавление: curl http://localhost:8080/user -d id={id} -d text={text}</h2>
+    {{#user}}
+        {{.}}
+    {{/user}}
+    <div>
+        Записи:
+        <div>
+            {{#userPosts}}
+                <div>{{.}}</div>
+            {{/userPosts}}
+        </div>
+    </div>
+</body>
+</html>

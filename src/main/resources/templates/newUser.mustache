@@ -1,0 +1,27 @@
+<html lang="ru">
+<head><title></title></head>
+<body>
+<title>новый пользователь</title>
+Новый пользователь
+
+<div>
+    <button name="user_added" type="button" onclick="toMain()">Вернуться</button>
+</div>
+
+<div>
+    <form method="post" title="Добавить пользователя">
+        <label><input type="text" name="name" placeholder="Имя"></label><br>
+        <label><input type="text" name="lastname" placeholder="Фамилия"></label><br>
+        <label><input type="number" min="1" max="150" name="age" placeholder="Возраст"></label><br>
+        <label><input type="text" name="school" placeholder="Номер школы"></label><br>
+        <button name="new_user" type="submit">Добавить</button>
+    </form>
+</div>
+
+<script>
+    function toMain(){
+        window.location.href = "/";
+    }
+</script>
+</body>
+</html>

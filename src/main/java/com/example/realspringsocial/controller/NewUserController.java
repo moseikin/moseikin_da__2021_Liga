@@ -1,0 +1,61 @@
+package com.example.realspringsocial.controller;
+
+import com.example.realspringsocial.entity.School;
+import com.example.realspringsocial.entity.Usr;
+import com.example.realspringsocial.repo.SchoolRepository;
+import com.example.realspringsocial.repo.UserRepository;
+import com.example.realspringsocial.service.SchoolService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller
+public class NewUserController {
+
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    SchoolRepository schoolRepository;
+
+    @Autowired
+    private SchoolService schoolService;
+
+
+    @PostMapping("/new-user")
+    public String new_user(@RequestParam String name,
+                               @RequestParam String lastname,
+                               @RequestParam String age,
+                               @RequestParam String school) {
+        Long schoolNumber = Long.valueOf(school);
+
+        School schoolFound = schoolService.findSchoolByNumber(schoolNumber, null);
+
+        Usr usr = new Usr(name, lastname, Integer.valueOf(age), schoolFound);
+        userRepository.save(usr);
+
+        return "newUser";
+    }
+
+    @GetMapping("/new-user")
+    public String new_user() {
+
+        return "newUser";
+    }
+
+
+    //    @PostMapping("/new_user")
+//    public @ResponseBody String add_new_user(@RequestParam String name,
+//                                             @RequestParam String lastname,
+//                                             @RequestParam String age,
+//                                             @RequestParam String school) {
+//        Long schoolNumber = Long.valueOf(school);
+//
+//        School schoolFound = schoolService.findSchoolByNumber(schoolNumber);
+//
+//        Usr usr = new Usr(name, lastname, Integer.valueOf(age), schoolFound);
+//        usrRepository.save(usr);
+//        return "SAVED";
+//    }
+}
