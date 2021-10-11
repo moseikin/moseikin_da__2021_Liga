@@ -1,7 +1,10 @@
 <html lang="ru">
 <head><title></title></head>
 <body>
-<h2>POST-запрос на добавление: curl http://localhost:8080/user -d id={id} -d text={text}</h2>
+<h2>POST-запросы: </h2>
+<p><h2>на добавление: curl http://localhost:8080/user -d id={} -d text={}</h2>
+<p><h2>изменить: curl http://localhost:8080/update -d id={} -d name={} -d lastname={} -d age={} -d school={}</h2></p>
+</h2>
     {{#user}}
         {{.}}
     {{/user}}

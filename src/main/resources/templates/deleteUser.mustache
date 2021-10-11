@@ -1,7 +1,8 @@
 <html lang="ru">
 <head><title>Удалить пользователя</title></head>
 <body>
-    <h2>Удалить: ?id= </h2>
+    <h2>Удалить: curl http://localhost:8080/delete-user -d id={}
+    </h2>
     {{#users}}
         {{.}}<br>
     {{/users}}
