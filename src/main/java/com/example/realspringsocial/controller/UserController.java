@@ -32,6 +32,7 @@ public class UserController {
     @Autowired
     private SchoolService schoolService;
 
+    // в usr почему-то передается только id, остальные поля = null
     @RequestMapping("/user")
     public String user(@ModelAttribute("userId") Usr usr,
                        Map<String, Object> model){
@@ -52,11 +53,6 @@ public class UserController {
                 model.putAll(reservedModel);
             }
         }
-
-
-
-        }
-
         return "user";
     }
 
