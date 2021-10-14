@@ -30,6 +30,8 @@ public class DeleteUserController {
     public String deleteUser(@RequestParam String id){
         Optional<Usr> optional = userRepository.findById(Long.valueOf(id));
         optional.ifPresent(usr -> userRepository.delete(usr));
+        System.out.println("DELETE = " + id);
+        System.out.println(optional.get());
         return "deleteUser";
 
 

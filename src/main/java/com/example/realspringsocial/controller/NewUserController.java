@@ -1,6 +1,5 @@
 package com.example.realspringsocial.controller;
 
-import com.example.realspringsocial.entity.School;
 import com.example.realspringsocial.entity.Usr;
 import com.example.realspringsocial.repo.SchoolRepository;
 import com.example.realspringsocial.repo.UserRepository;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class NewUserController {
@@ -22,26 +20,42 @@ public class NewUserController {
     @Autowired
     private SchoolService schoolService;
 
+    @PostMapping("/registration")
+    public String new_user(Usr usr) {
+//        Long schoolNumber = Long.valueOf(school);
+//
+//        School schoolFound = schoolService.findSchoolByNumber(schoolNumber, null);
 
-    @PostMapping("/new-user")
-    public String new_user(@RequestParam String name,
-                               @RequestParam String lastname,
-                               @RequestParam String age,
-                               @RequestParam String school) {
-        Long schoolNumber = Long.valueOf(school);
-
-        School schoolFound = schoolService.findSchoolByNumber(schoolNumber, null);
-
-        Usr usr = new Usr(name, lastname, Integer.valueOf(age), schoolFound);
+//        Usr usr = new Usr(name, lastname, Integer.valueOf(age), schoolFound);
+        usr.setIsActive(true);
+        usr.setLastName("NEW");
         userRepository.save(usr);
 
-        return "newUser";
+        return "registration";
     }
 
-    @GetMapping("/new-user")
+
+//    @PostMapping("/new-user")
+//    public String new_user(@RequestParam String name,
+//                               @RequestParam String lastname,
+//                               @RequestParam String age,
+//                               @RequestParam String school,
+//                                @RequestParam String p) {
+//        Long schoolNumber = Long.valueOf(school);
+//
+//        School schoolFound = schoolService.findSchoolByNumber(schoolNumber, null);
+//
+//        Usr usr = new Usr(name, lastname, Integer.valueOf(age), schoolFound);
+//
+//        userRepository.save(usr);
+//
+//        return "newUser";
+//    }
+
+    @GetMapping("/registration")
     public String new_user() {
 
-        return "newUser";
+        return "registration";
     }
 
 

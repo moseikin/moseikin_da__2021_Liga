@@ -33,6 +33,12 @@ public class Usr {
     @Column(name = "age")
     private Integer age;
 
+    @Column(name = "p")
+    private String p;
+
+    @Column(name = "is_active")
+    private Boolean isActive;
+
     @ManyToOne
     @JoinColumn(name = "school_number")
     private School school;

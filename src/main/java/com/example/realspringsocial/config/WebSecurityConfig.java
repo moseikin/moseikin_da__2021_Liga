@@ -11,18 +11,24 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private DataSource dataSource;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/")
+                .antMatchers("/registration")
                 .permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -32,20 +38,36 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
                 .permitAll()
+                .deleteCookies("remove")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID");
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("u")
-                .password("{noop}p")
-                .authorities("USER");
+        auth.jdbcAuthentication()
+                .dataSource(dataSource)
+                .passwordEncoder(NoOpPasswordEncoder.getInstance())
+                .usersByUsernameQuery("select name, p, is_active from usr where name=?")
+//                .authoritiesByUsernameQuery(..............)
+        ;
     }
-//
-//
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
+
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.inMemoryAuthentication()
+//                .withUser("user")
+//                .password(passwordEncoder().encode("123"))
+//                .roles("ADMIN");
+//        auth.inMemoryAuthentication()
+//                .withUser("user2")
+//                .password(passwordEncoder().encode("123"))
+//                .roles("USER");
 //    }
+
+
+    @Bean
+    PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 }
