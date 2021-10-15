@@ -1,42 +1,40 @@
 package com.example.liquibasedemo.controller;
 
-import com.example.liquibasedemo.config.service.BasicService;
+import com.example.liquibasedemo.dto.CustomerDto;
+import com.example.liquibasedemo.service.BasicService;
 import com.example.liquibasedemo.entity.Customer;
-import com.example.liquibasedemo.persistence.CustomerRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/crud/customer")
 @RequiredArgsConstructor
 @Api(value = "Customer CRUD operations", description = "Customer CRUD operations")
 public class CustomerController {
-//    private final CustomerRepository customerRepository;
-
     @Autowired
     private BasicService basicService;
 
     @ApiOperation(value = "Enumerates all Customer entities")
     @GetMapping
-    public List<Customer> enumerate() {
+    public List<CustomerDto> enumerate() {
         return basicService.findAll();
     }
 
     @ApiOperation(value = "Store given Customer entity")
     @PostMapping
-    public Customer save(@RequestBody Customer customer) {
-        return basicService.save(customer);
+    public CustomerDto save(@RequestBody CustomerDto customerDto) {
+        return basicService.save(customerDto);
     }
 
     @ApiOperation(value = "Retrieves Customer entity by it ID")
     @GetMapping("/{id}")
-    public Customer get(@PathVariable("id")String id) {
+    public CustomerDto get(@PathVariable("id")String id) {
         return basicService.get(id);
     }
 
@@ -48,9 +46,8 @@ public class CustomerController {
 
     @ApiOperation(value = "Creates Customer entity")
     @PutMapping
-    public Customer create() {
-        Customer customer = new Customer();
-        return basicService.save(customer);
+    public CustomerDto create() {
+        return basicService.save(new CustomerDto());
     }
 
     //TODO: добавить и проаннотировать операции удаления сущности Customer, и создания новой пустой сущности Customer
