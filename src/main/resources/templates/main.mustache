@@ -1,15 +1,10 @@
 
-<html>
+<html lang="ru">
     <head>
-    </head>
+        <title></title></head>
     <title>
         Главная страница
     </title>
-
-    <h2>POST-запрос на добавление:
-    curl http://localhost:8080 -d name=new_name; -d lastname=new_lastname -d age=40 -d school=4</h2>
-
-    <h2>?id=... - подробнее о пользователе</h2>
 
 <div>
     {{#name}}
@@ -17,13 +12,6 @@
     {{/name}}
 
 </div>
-
-    <form action="/logout" method="post">
-        <input type="hidden" name="_csrf" value="{{_csrf.token}}">
-        <input type="submit" value="Sign Out"/>
-    </form>
-
-
 
 
     <div>
@@ -42,12 +30,5 @@
             {{/schools}}
         </div>
     </div>
-
-
-
-
-
-
-
 </body>
 </html>

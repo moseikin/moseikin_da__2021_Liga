@@ -68,18 +68,18 @@ public class UserController {
         return "user";
     }
 
-    @PostMapping("/update")
-    public String updateUser(@RequestParam String id,
-                             @RequestParam String name,
-                             @RequestParam String lastname,
-                             @RequestParam String age,
-                             @RequestParam String school) {
-        School schoolToEdit = schoolService.findSchoolByNumber(Long.parseLong(school), null);
-        Usr usr = new Usr(name, lastname, Integer.valueOf(age), schoolToEdit);
-        userService.editUser(id, usr);
-
-        return "user";
-    }
+//    @PostMapping("/update")
+//    public String updateUser(@RequestParam String id,
+//                             @RequestParam String name,
+//                             @RequestParam String lastname,
+//                             @RequestParam String age,
+//                             @RequestParam String school) {
+//        School schoolToEdit = schoolService.findSchoolByNumber(Long.parseLong(school), null);
+//        Usr usr = new Usr(name, lastname, Integer.valueOf(age), schoolToEdit);
+//        userService.editUser(id, usr);
+//
+//        return "user";
+//    }
 
 
 
