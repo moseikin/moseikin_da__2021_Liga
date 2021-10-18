@@ -1,1 +1,0 @@
-ALTER TABLE usr ADD COLUMN is_active boolean DEFAULT FALSE

@@ -1,6 +1,6 @@
 package com.example.realspringsocial.entity;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,24 +37,30 @@ public class Friends implements Serializable {
         @Column(name = "owner_id")
         protected Long ownerId;
 
-        @Column(name = "usr_id")
-        protected Long usrId;
+        @Column(name = "user_id")
+        protected Long userId;
 
-        public FriendsPk(Long ownerId, Long usrId) {
+        public FriendsPk(Long ownerId, Long userId) {
             this.ownerId = ownerId;
-            this.usrId = usrId;
+            this.userId = userId;
+        }
+
+        @Override
+        public String toString() {
+            return "";
         }
     }
 
     @ManyToOne
     @JoinColumn(name = "owner_id", updatable = false, insertable = false)
+    @JsonBackReference   // чтобы избежать stackoverflow при обращении к friends
     private Usr usr;
 
     @Override
     public String toString() {
         return "\n Friends: " +
                 "Init by: " + friendsPk.ownerId +
-                ", to: " + friendsPk.usrId +
+                ", to: " + friendsPk.userId +
                 ", accepted: " + areFriends;
     }
 }

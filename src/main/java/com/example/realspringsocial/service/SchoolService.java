@@ -2,27 +2,29 @@ package com.example.realspringsocial.service;
 
 import com.example.realspringsocial.entity.School;
 import com.example.realspringsocial.repo.SchoolRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
+@Transactional(readOnly = true)
 public class SchoolService {
-    @Autowired
-    private SchoolRepository schoolRepository;
 
-    public School findSchoolByNumber(Long schoolNumber, String address){
-        System.out.println("SCHOL REPO = " + schoolRepository);
-        Optional<School> optional = schoolRepository.findById(schoolNumber);
+    private final SchoolRepository schoolRepository;
 
-        if (optional.isPresent()) {
-            return optional.get();
-        } else {
-            return addSchool(schoolNumber, address);
-        }
+    public Iterable<School> allSchools(){
+        return schoolRepository.findAll();
     }
 
+    public School findSchoolByNumber(Long schoolNumber, String address){
+        Optional<School> optional = schoolRepository.findById(schoolNumber);
+        return optional.orElseGet(() -> addSchool(schoolNumber, address));
+    }
+
+    @Transactional()
     public School addSchool(Long schoolNumber, String address) {
         School school = new School(schoolNumber, address);
         schoolRepository.save(school);

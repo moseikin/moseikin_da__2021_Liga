@@ -1,89 +1,47 @@
 package com.example.realspringsocial.controller;
 
 import com.example.realspringsocial.entity.School;
-import com.example.realspringsocial.entity.UserPosts;
 import com.example.realspringsocial.entity.Usr;
-import com.example.realspringsocial.repo.UserPostsRepository;
-import com.example.realspringsocial.repo.UserRepository;
 import com.example.realspringsocial.service.SchoolService;
 import com.example.realspringsocial.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
+@AllArgsConstructor
 @Controller
+@RequestMapping("/")
 public class UserController {
-    private Usr usr;
-    private final Map<String, Object> reservedModel = new HashMap<>();
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private UserPostsRepository userPostsRepository;
+    private final SchoolService schoolService;
+    private final UserService userService;
 
-    @Autowired
-    private UserService userService;
+    @GetMapping
+    public String main (Map<String, Object> model) {
+        Iterable<Usr> users = userService.allUsers();
+        model.put("users", users);
 
-    @Autowired
-    private SchoolService schoolService;
-
-    // в usr почему-то передается только id, остальные поля = null
-    @RequestMapping("/user")
-    public String user(@ModelAttribute("userId") Usr usr,
-                       Map<String, Object> model){
-        if (usr.getId() != null) {
-            Long id = usr.getId();
-            Optional<Usr> optional = userRepository.findById(id);
-            optional.ifPresent(user -> {
-                this.usr = user;
-                model.put("user", user);
-                List<UserPosts> userPosts = userPostsRepository.findByUsrId(id);
-                model.put("userPosts", userPosts);
-                reservedModel.putAll(model);
-            });
-        } else {
-            if (reservedModel.isEmpty()) {
-                return "redirect:/";
-            } else {
-                model.putAll(reservedModel);
-            }
-        }
-        return "user";
+        Iterable<School> schools = schoolService.allSchools();
+        model.put("schools", schools);
+        return "main";
     }
 
-    @PostMapping("/user")
-    public String addPost(@RequestParam String id, @RequestParam String text) {
-        if (id != null) {
-            Optional<Usr> optional = userRepository.findById(Long.valueOf(id));
-            optional.ifPresent(value -> usr = value);
-        }
-        UserPosts userPosts = new UserPosts(usr, text);
-        userPostsRepository.save(userPosts);
-//        usr = null;
-        return "user";
+
+    @PostMapping
+    public @ResponseBody String addUser(@RequestBody Usr usr){
+        return userService.addUser(usr);
     }
 
-//    @PostMapping("/update")
-//    public String updateUser(@RequestParam String id,
-//                             @RequestParam String name,
-//                             @RequestParam String lastname,
-//                             @RequestParam String age,
-//                             @RequestParam String school) {
-//        School schoolToEdit = schoolService.findSchoolByNumber(Long.parseLong(school), null);
-//        Usr usr = new Usr(name, lastname, Integer.valueOf(age), schoolToEdit);
-//        userService.editUser(id, usr);
-//
-//        return "user";
-//    }
+    @DeleteMapping("/delete-user")
+    public @ResponseBody String deleteUser(@RequestParam String id){
+        return userService.deleteUser(id);
+    }
 
-
-
-
-
-
+    @PutMapping("/edit-user")
+    public @ResponseBody String editUser(@RequestBody Usr usr){
+        return userService.editUser(usr);
+    }
 }

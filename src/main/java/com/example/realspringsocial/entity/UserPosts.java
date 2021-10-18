@@ -16,15 +16,15 @@ import javax.persistence.*;
 public class UserPosts {
 
     @Id
-    @GeneratedValue
-//    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "text", length = 2048)
     private String text;
 
     @ManyToOne
-    @JoinColumn(name = "usr_id")
+    @JoinColumn(name = "user_id")
     private Usr usr;
 
     public UserPosts(Usr usr, String text) {
@@ -34,7 +34,7 @@ public class UserPosts {
 
     @Override
     public String toString() {
-        return "id=" + id +
+        return "\n id=" + id +
                 ", " + usr.getName() +
                 " " + usr.getLastName() +
                 ", " + text;

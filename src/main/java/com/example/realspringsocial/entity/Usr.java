@@ -1,10 +1,10 @@
 package com.example.realspringsocial.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
@@ -21,7 +21,7 @@ public class Usr {
 
     @Id
     @GeneratedValue
-    @Column(name = "usr_id")
+    @Column(name = "user_id")
     private Long id;
 
     @Column(name = "name", length = 20)
@@ -33,20 +33,16 @@ public class Usr {
     @Column(name = "age")
     private Integer age;
 
-    @Column(name = "p")
-    private String p;
-
-    @Column(name = "is_active")
-    private Boolean isActive;
 
     @ManyToOne
     @JoinColumn(name = "school_number")
     private School school;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usr")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usr", fetch = FetchType.LAZY)
     private List<UserPosts> userPostsList = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usr")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usr", fetch = FetchType.LAZY)
+    @JsonManagedReference  // чтобы избежать stackoverflow при обращении к friends
     private List<Friends> friendsList = new ArrayList<>();
 
     public Usr(String name, String lastName, Integer age, School school) {

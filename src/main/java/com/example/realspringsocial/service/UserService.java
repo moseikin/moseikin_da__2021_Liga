@@ -2,19 +2,25 @@ package com.example.realspringsocial.service;
 
 import com.example.realspringsocial.entity.Usr;
 import com.example.realspringsocial.repo.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
+@Transactional(readOnly = true)
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private SchoolService schoolService;
+    private final UserRepository userRepository;
+    private final SchoolService schoolService;
 
+    public Iterable<Usr> allUsers(){
+        return userRepository.findAll();
+    }
+
+    @Transactional
     public String addUser(Usr usr) {
         Long schoolNumber = usr.getSchool().getNumber();
         schoolService.findSchoolByNumber(schoolNumber, usr.getSchool().getAddress());
@@ -22,6 +28,7 @@ public class UserService {
         return "added: " + usr;
     }
 
+    @Transactional
     public String editUser(Usr usrNewData) {
         Optional<Usr> optional = userRepository.findById(usrNewData.getId());
         if (optional.isPresent()){
@@ -49,6 +56,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public String deleteUser(String id) {
         Long idLong = Long.valueOf(id);
         Optional<Usr> optional = userRepository.findById(idLong);
