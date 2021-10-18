@@ -21,7 +21,9 @@ public class School {
     @Column(name = "address", length = 100)
     private String address;
 
-    @OneToMany(mappedBy = "school", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "school", cascade = {
+            CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH
+    })
     private List<Usr> usrList;
 
     public School(Long number, String address) {

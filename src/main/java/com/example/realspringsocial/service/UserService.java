@@ -1,9 +1,11 @@
 package com.example.realspringsocial.service;
 
+import com.example.realspringsocial.entity.School;
 import com.example.realspringsocial.entity.Usr;
 import com.example.realspringsocial.repo.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -20,10 +22,17 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public String addUser(Usr usr) {
-        Long schoolNumber = usr.getSchool().getNumber();
-        schoolService.findSchoolByNumber(schoolNumber, usr.getSchool().getAddress());
+        School schoolFound = null;
+        if (usr.getSchool() != null) {
+            Long schoolNumber = usr.getSchool().getNumber();
+            schoolFound = schoolService.findSchoolByNumber(schoolNumber, usr.getSchool().getAddress());
+        }
+
+        if (schoolFound != null) {
+            usr.setSchool(schoolFound);
+        }
         userRepository.save(usr);
         return "added: " + usr;
     }

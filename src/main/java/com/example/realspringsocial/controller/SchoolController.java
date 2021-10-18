@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @AllArgsConstructor
-@Controller
+@RestController
 @RequestMapping(path = "/school")
 public class SchoolController {
     private final SchoolService schoolService;
@@ -19,5 +19,10 @@ public class SchoolController {
     public School addSchool(@RequestParam String number,
                             @RequestParam String address) {
         return schoolService.findSchoolByNumber(Long.valueOf(number), address);
+    }
+
+    @DeleteMapping("/delete")
+    public String addSchool(@RequestParam Long number) {
+        return schoolService.deleteSchool(number);
     }
 }
