@@ -1,0 +1,1 @@
+ALTER TABLE booking ADD COLUMN status VARCHAR(20) DEFAULT 'request'
