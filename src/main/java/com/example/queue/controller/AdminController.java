@@ -5,7 +5,6 @@ import com.example.queue.service.AdminService;
 import com.example.queue.service.BookingService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;

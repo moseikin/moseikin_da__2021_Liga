@@ -14,8 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class ScheduledService {
     private final BookingRepo bookingRepo;
 
-    // проходим каждый час в рабочее время рабочих дней и анулируем подтвержденные заявки
-    // неподтвержденные анулируются по прошествии 15 минут
+    // проходим каждый час в рабочее время рабочих дней
+    // и анулируем неподтвержденные и подтвержденные заявки
+    // с прошедшей датой
     // с теми, где отмечено appeared и completed, не делаем ничего
     @Scheduled(cron = Constants.EVERY_HOUR_TOP_WORKING_DAYS)
     @Transactional
@@ -25,7 +26,8 @@ public class ScheduledService {
         for (Booking item : bookings) {
             if (item.bookingTime() != null & item.status() != null) {
                 if (millisNow > item.bookingTime().getTime() &&
-                        item.status().equals(Constants.STATUS_CONFIRMED)){
+                        item.status().equals(Constants.STATUS_CONFIRMED) |
+                                item.status().equals(Constants.STATUS_UNCONFIRMED)){
                     setAnnulled(item);
                 }
             } else {

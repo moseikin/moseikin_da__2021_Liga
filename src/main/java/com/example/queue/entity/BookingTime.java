@@ -1,9 +1,7 @@
 package com.example.queue.entity;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotEmpty;
 

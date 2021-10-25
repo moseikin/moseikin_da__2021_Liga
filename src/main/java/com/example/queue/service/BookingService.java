@@ -100,6 +100,7 @@ public class BookingService {
             if (booking.status().equals(Constants.STATUS_UNCONFIRMED)) {
                 booking.status(Constants.STATUS_ANNULLED);
                 bookingRepo.save(booking);
+                notification.annulled(booking);
             }
         }
     }
@@ -128,7 +129,6 @@ public class BookingService {
         } else {
             return Constants.CANNOT_FIND_BOOKING;
         }
-
     }
 
     public Booking findById(long bookId) {

@@ -33,11 +33,4 @@ public class MainController {
 
     }
 
-    @PostMapping(path = "/")
-    public @ResponseBody
-    User addAdmin(){
-        return adminService.addAdmin();
-    }
-
-
 }
