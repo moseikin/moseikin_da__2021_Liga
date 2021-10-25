@@ -72,11 +72,9 @@ public class BookingService {
 
     private String insertBook(Timestamp timestamp, User user) {
         // если заказ делается на время, меньшее, чем дается для подтверждения заказа, то подтверждение не нужно
-        Boolean isConfirmed = ability.isNeedToConfirm(timestamp);
 
         Booking booking = new Booking();
         booking.bookingTime(timestamp)
-                .isConfirmed(isConfirmed)
                 .status(Constants.STATUS_UNCONFIRMED)
                 .user(user);
         bookingRepo.save(booking);

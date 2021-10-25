@@ -57,13 +57,6 @@ public class BookingAbility {
         }
     }
 
-    public Boolean isNeedToConfirm(Timestamp timestamp) {
-        long bookMillis = timestamp.getTime();
-        long timeOfBooking = System.currentTimeMillis();
-        // если условие соблюдается, то подтверждения не нужно
-        return (bookMillis - timeOfBooking) < queueParameters.timeForOrder();
-    }
-
     public Timestamp bookingTimeToTimestamp(BookingTime bookingTime) {
         Calendar calendar = getCalendar(bookingTime);
         return new Timestamp(calendar.getTimeInMillis());

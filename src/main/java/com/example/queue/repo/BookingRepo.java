@@ -12,8 +12,6 @@ import java.util.List;
 @Repository
 public interface BookingRepo extends CrudRepository<Booking, Long> {
 
-    List<Booking> findAllByIsConfirmedTrue();
-
     @Query("select b.bookingTime from Booking b")
     List<Timestamp> findAllBookingTime();
 

@@ -25,7 +25,7 @@ public class EmailService implements Notification {
         System.out.println("http://localhost:8080/user/confirm-book?userId=" + booking.user().id() +
                                                 "&bookId=" + booking.bookId());
         System.out.println("Заказ создан в " + creationTime +
-                "Подтвердите ваш заказ до " + timeToConfirm +
+                "\nПодтвердите ваш заказ до " + timeToConfirm +
                 ", иначе ваш заказ будет анулирован");
     }
 
