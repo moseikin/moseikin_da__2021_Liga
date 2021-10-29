@@ -2,11 +2,13 @@ package com.example.queue.service;
 
 import com.example.queue.config.JwtProvider;
 import com.example.queue.dto.UserDto;
+import com.example.queue.entity.RolesEnum;
 import com.example.queue.entity.request.AuthRequest;
 import com.example.queue.entity.request.RegistrationRequest;
 import com.example.queue.entity.User;
 import com.example.queue.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,16 +25,12 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
-    public UserDto getUserDto(String login){
-        return new UserDto().toUserDto(userRepo.getUserByLogin(login));
-    }
-
-    public User getUserByLogin(String login) {
-        return userRepo.getUserByLogin(login);
+    public UserDto getUserDto(Authentication auth){
+        return new UserDto().toUserDto(userRepo.getUserByLogin(auth.getName()));
     }
 
     public User findByLoginAndPassword(String login, String password) {
-        User user = getUserByLogin(login);
+        User user = userRepo.getUserByLogin(login);
         if (user != null) {
             if (passwordEncoder.matches(password, user.pass())) {
                 return user;
@@ -41,6 +39,7 @@ public class UserService {
         return null;
     }
 
+    // requst and responce убрать из сервиса
     public String logIn(AuthRequest request, HttpServletResponse response) {
         User user = findByLoginAndPassword(request.getLogin(), request.getPassword());
         String token = jwtProvider.generateToken(user.login());
@@ -51,17 +50,18 @@ public class UserService {
         return token;
     }
 
+    // requst убрать из сервиса
     @Transactional
-    public String registerNewUser(RegistrationRequest registrationRequest) {
+    public UserDto registerNewUser(RegistrationRequest registrationRequest) {
         User user = new User();
         user.pass(passwordEncoder.encode(registrationRequest.getPassword()))
                 .login(registrationRequest.getLogin())
                 .name(registrationRequest.getName())
                 .lastName(registrationRequest.getLastname())
                 .eMail(registrationRequest.getEmail())
-                .role("ROLE_USER");
+                .role(RolesEnum.USER.getRole());
 
         userRepo.save(user);
-        return new UserDto().toUserDto(user).toString();
+        return new UserDto().toUserDto(user);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.queue.controller;
 
+import com.example.queue.dto.UserDto;
 import com.example.queue.entity.request.AuthRequest;
 import com.example.queue.entity.request.RegistrationRequest;
 import com.example.queue.service.UserService;
@@ -24,7 +25,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody @Valid RegistrationRequest registrationRequest) {
+    public UserDto registerUser(@RequestBody @Valid RegistrationRequest registrationRequest) {
         return userService.registerNewUser(registrationRequest);
     }
 

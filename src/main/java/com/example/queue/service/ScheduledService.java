@@ -2,6 +2,7 @@ package com.example.queue.service;
 
 import com.example.queue.Constants;
 import com.example.queue.entity.Booking;
+import com.example.queue.entity.StatusesEnum;
 import com.example.queue.repo.BookingRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,8 +27,8 @@ public class ScheduledService {
         for (Booking item : bookings) {
             if (item.bookingTime() != null & item.status() != null) {
                 if (millisNow > item.bookingTime().getTime() &&
-                        item.status().equals(Constants.STATUS_CONFIRMED) |
-                                item.status().equals(Constants.STATUS_UNCONFIRMED)){
+                        item.status().equals(StatusesEnum.STATUS_CONFIRMED.getStatus()) |
+                                item.status().equals(StatusesEnum.STATUS_UNCONFIRMED.getStatus())){
                     setAnnulled(item);
                 }
             } else {
@@ -37,7 +38,7 @@ public class ScheduledService {
     }
 
     public void setAnnulled(Booking booking){
-        booking.status(Constants.STATUS_ANNULLED);
+        booking.status(StatusesEnum.STATUS_ANNULLED.getStatus());
         bookingRepo.save(booking);
     }
 }

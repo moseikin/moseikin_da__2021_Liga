@@ -5,11 +5,11 @@ import com.example.queue.Constants;
 import com.example.queue.dto.BookingDto;
 import com.example.queue.entity.Booking;
 import com.example.queue.entity.BookingTime;
+import com.example.queue.entity.StatusesEnum;
 import com.example.queue.entity.User;
 import com.example.queue.repo.BookingRepo;
 import com.example.queue.repo.UserRepo;
 import com.example.queue.service.interfaces.Notification;
-import com.example.queue.component.BookingAbility;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -17,12 +17,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -39,14 +38,14 @@ public class BookingService {
     private final UserRepo userRepo;
     private final BookingRepo bookingRepo;
     private final ScheduledService scheduledService;
-    private final BookingAbility ability;
+    private final CalendarService ability;
     private final Notification notification;
 
     @Value(value = "${millisToConfirm}")
     private Long millisToConfirm;
 
     @Transactional
-    public String createBooking(BookingTime bookingTime, String login) {
+    public String createBooking(BookingTime bookingTime, Authentication auth) {
         // эта дата не в прошлом?
         if (!ability.checkDateNotInPast(bookingTime)) {
             return Constants.THIS_DAY_GONE;
@@ -61,8 +60,8 @@ public class BookingService {
        Timestamp timestamp = ability.bookingTimeToTimestamp(bookingTime);
 
         // проверить, доступно ли время
-        if (isBookingAvailable(timestamp)) {
-            User user = userRepo.getUserByLogin(login);
+        if (isBookingAvailable(bookingTime, timestamp)) {
+            User user = userRepo.getUserByLogin(auth.getName());
             String newBook = insertBook(timestamp, user);
             return Constants.BOOKING_DONE + ": \n" + newBook;
         } else {
@@ -71,11 +70,9 @@ public class BookingService {
     }
 
     private String insertBook(Timestamp timestamp, User user) {
-        // если заказ делается на время, меньшее, чем дается для подтверждения заказа, то подтверждение не нужно
-
         Booking booking = new Booking();
         booking.bookingTime(timestamp)
-                .status(Constants.STATUS_UNCONFIRMED)
+                .status(StatusesEnum.STATUS_UNCONFIRMED.getStatus())
                 .user(user);
         bookingRepo.save(booking);
 
@@ -94,20 +91,20 @@ public class BookingService {
     }
 
     public void doAnnullingBook(long bookId) {
-        Optional<Booking> optional = bookingRepo.findById(bookId);
-        if (optional.isPresent()){
-            Booking booking = optional.get();
-            if (booking.status().equals(Constants.STATUS_UNCONFIRMED)) {
-                booking.status(Constants.STATUS_ANNULLED);
+        Booking booking = bookingRepo.findByBookId(bookId);
+        if (booking != null){
+            if (booking.status().equals(StatusesEnum.STATUS_UNCONFIRMED.getStatus())) {
+                booking.status(StatusesEnum.STATUS_ANNULLED.getStatus());
                 bookingRepo.save(booking);
                 notification.annulled(booking);
             }
         }
     }
 
-    public boolean isBookingAvailable(Timestamp timestamp){
-        List<Timestamp> allBookings = bookingRepo.findAllBookingTime();
-        allBookings.sort(Comparator.comparingLong(Timestamp::getTime));
+    public boolean isBookingAvailable(BookingTime bookingTime, Timestamp timestamp){
+        // получаем timestamp начала и окончания рабочего дня
+        List<Timestamp> allBookings = ability.getAllTimeStampsThisDay(bookingTime);
+
         // очередь пуста, можно записываться
         if (allBookings.isEmpty()) {
             return true;
@@ -117,12 +114,12 @@ public class BookingService {
     }
 
     @Transactional
-    public String deleteBook(Long bookId, UserDetails userDetails) {
+    public String deleteBook(Long bookId, Authentication auth) {
         Booking booking;
-        if (userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-            booking = findById(bookId);
+        if (auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+            booking = bookingRepo.findByBookId(bookId);
         } else {
-            booking = bookingRepo.findByBookIdAndUserLogin(bookId, userDetails.getUsername());
+            booking = bookingRepo.findByBookIdAndUserLogin(bookId, auth.getName());
         }
         if (booking != null) {
             return doRemoveBook(booking);
@@ -131,17 +128,16 @@ public class BookingService {
         }
     }
 
-    public Booking findById(long bookId) {
-        Optional<Booking> optional = bookingRepo.findById(bookId);
-        return optional.orElse(null);
-    }
-
     public String doRemoveBook(Booking booking){
         bookingRepo.delete(booking);
         return Constants.REMOVING_SUCCEED;
     }
 
     public String getNearestBook() {
+//        Booking booking = bookingRepo.findFirstByBookingTime(new Timestamp(System.currentTimeMillis()));
+//        if (booking != null) {
+//            return booking.toString();
+//        }
         List <BookingDto> bookings = doGetAllActiveBook();
         for(BookingDto bookingDto : bookings) {
             if (bookingDto.bookingTime().getTime() >= System.currentTimeMillis()) {
@@ -152,9 +148,8 @@ public class BookingService {
     }
 
     public List<BookingDto> doGetAllActiveBook() {
-        List <Booking> bookings = bookingRepo.findAllByStatus();
-        bookings.sort(Comparator.comparingLong(o -> o.bookingTime().getTime()));
-       return bookings.stream()
+        return bookingRepo.findAllByStatus()
+                .stream()
                 .map(new BookingDto()::toBookingDto)
                 .collect(Collectors.toList());
     }
@@ -175,7 +170,7 @@ public class BookingService {
             return Constants.LOGIN_UNTO_SAME_USER;
         }
 
-        Booking booking = findById(Long.parseLong(bookId));
+        Booking booking = bookingRepo.findByBookId(Long.parseLong(bookId));
         if (booking == null) {
             return Constants.CANNOT_FIND_BOOKING;
         } else {
@@ -189,15 +184,14 @@ public class BookingService {
 
     @Transactional
     public void setConfirmed(Booking booking){
-        booking.status(Constants.STATUS_CONFIRMED);
+        booking.status(StatusesEnum.STATUS_CONFIRMED.getStatus());
         bookingRepo.save(booking);
     }
 
-    // заявки пользователя. Dto
+    // активные (confirmed and unconfirmed)заявки конкретного пользователя
     private String doGetUserActiveBookings(String name) {
-        List<BookingDto> booking = bookingRepo.findAllByStatus()
+        List<BookingDto> booking = bookingRepo.findAllByStatusAndUser(userRepo.getUserByLogin(name).id())
                 .stream()
-                .filter(b -> b.user().id().equals(userRepo.getUserByLogin(name).id()))
                 .map(new BookingDto()::toBookingDto)
                 .collect(Collectors.toList());
         return booking.toString();

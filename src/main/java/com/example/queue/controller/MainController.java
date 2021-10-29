@@ -1,12 +1,13 @@
 package com.example.queue.controller;
 
 import com.example.queue.entity.BookingTime;
-import com.example.queue.entity.User;
-import com.example.queue.service.AdminService;
 import com.example.queue.service.MainService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
@@ -15,11 +16,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/")
 public class MainController {
 
-    private final AdminService adminService;
     private final MainService mainService;
 
-    // поля час и минута = 0 - смотрим заказы за весь день
-    @GetMapping(path = "/free-time")
+    // поля: час и минута = 0 - смотрим заказы за весь день
+    @GetMapping(path = "/bookings")
     public String getThisDayBookings(@RequestParam Integer year,
                                      @RequestParam Integer month,
                                      @RequestParam Integer day) {

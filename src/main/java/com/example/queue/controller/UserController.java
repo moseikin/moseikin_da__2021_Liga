@@ -1,5 +1,6 @@
 package com.example.queue.controller;
 
+import com.example.queue.dto.UserDto;
 import com.example.queue.entity.BookingTime;
 import com.example.queue.entity.CustomUserDetails;
 import com.example.queue.service.BookingService;
@@ -20,8 +21,9 @@ public class UserController {
 
 
     @GetMapping
-    public String getUserInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
-            return userService.getUserDto(userDetails.getUsername()).toString();
+    public UserDto getUserInfo() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return userService.getUserDto(auth);
     }
 
     @GetMapping(path = "/active-bookings")
@@ -33,14 +35,13 @@ public class UserController {
     @PostMapping(path = "/create-book")
     public @ResponseBody String createBook(@RequestBody BookingTime bookingTime){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return bookingService.createBooking(bookingTime, auth.getName());
-
+        return bookingService.createBooking(bookingTime, auth);
     }
 
     @PostMapping(path = "/delete-book")
-    public @ResponseBody String deleteBook(@RequestBody Long bookId,
-                                           @AuthenticationPrincipal CustomUserDetails userDetails){
-        return bookingService.deleteBook(bookId, userDetails);
+    public @ResponseBody String deleteBook(@RequestBody Long bookId){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return bookingService.deleteBook(bookId, auth);
     }
 
     @GetMapping(path = "/confirm-book")

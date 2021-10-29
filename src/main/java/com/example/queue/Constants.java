@@ -19,14 +19,7 @@ public class Constants {
     public static final String CONFIRMED = "Заявка подтверждена";
     public static final String APPEARED = "Пользователь явился";
     public static final String COMPLETED = "Заявка завершена";
-    public static final String ANNULLED = "Заявка аннулирована";    // не подтвердил или не явился
-
-
-    public static final String STATUS_APPEARED = "appeared";
-    public static final String STATUS_ANNULLED = "annulled";
-    public static final String STATUS_COMPLETED = "completed";
-    public static final String STATUS_UNCONFIRMED = "unconfirmed";
-    public static final String STATUS_CONFIRMED = "confirmed";
+    public static final String ANNULLED = "Заявка аннулирована";    // не подтвердил или не явился после подтверждения
 
     public static final String CANNOT_FIND_NEAREST_ACTIVE = "Нет ближайших активных заявок";
 

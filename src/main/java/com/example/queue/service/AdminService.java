@@ -2,6 +2,8 @@ package com.example.queue.service;
 
 import com.example.queue.Constants;
 import com.example.queue.entity.Booking;
+import com.example.queue.entity.RolesEnum;
+import com.example.queue.entity.StatusesEnum;
 import com.example.queue.entity.User;
 import com.example.queue.repo.BookingRepo;
 import com.example.queue.repo.UserRepo;
@@ -21,8 +23,6 @@ public class AdminService {
     private final PasswordEncoder passwordEncoder;
     private final BookingRepo bookingRepo;
 
-
-
     @Transactional
     public User addAdmin(){
         User user = new User();
@@ -30,7 +30,7 @@ public class AdminService {
                 .pass(passwordEncoder.encode(("admin")))
                 .name("Administrator")
                 .lastName("Adminov")
-                .role("ROLE_ADMIN")
+                .role(RolesEnum.ADMIN.getRole())
                 .eMail("111111@dsfds.ru");
         userRepo.save(user);
         return user;
@@ -38,9 +38,9 @@ public class AdminService {
 
     @Transactional
     public String setAppeared(long bookId) {
-        Booking booking = findById(bookId);
+        Booking booking = bookingRepo.findByBookId(bookId);
         if (booking != null){
-            booking.status(Constants.STATUS_APPEARED);
+            booking.status(StatusesEnum.STATUS_APPEARED.getStatus());
             bookingRepo.save(booking);
             return Constants.APPEARED;
         } else {
@@ -50,9 +50,9 @@ public class AdminService {
 
     @Transactional
     public String setCompleted(long bookId) {
-        Booking booking = findById(bookId);
+        Booking booking = bookingRepo.findByBookId(bookId);
         if (booking != null){
-            booking.status(Constants.STATUS_COMPLETED);
+            booking.status(StatusesEnum.STATUS_COMPLETED.getStatus());
             bookingRepo.save(booking);
             return Constants.COMPLETED;
         } else {
@@ -62,19 +62,13 @@ public class AdminService {
 
     @Transactional
     public String setAnnulled(long bookId) {
-        Booking booking = findById(bookId);
+        Booking booking = bookingRepo.findByBookId(bookId);
         if (booking != null){
-            booking.status(Constants.STATUS_ANNULLED);
+            booking.status(StatusesEnum.STATUS_ANNULLED.getStatus());
             bookingRepo.save(booking);
             return Constants.ANNULLED;
         } else {
             return Constants.CANNOT_FIND_BOOKING;
         }
     }
-
-    public Booking findById(long bookId) {
-        Optional<Booking> optional = bookingRepo.findById(bookId);
-        return optional.orElse(null);
-    }
-
 }
