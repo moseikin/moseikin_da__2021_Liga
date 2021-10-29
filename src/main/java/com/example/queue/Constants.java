@@ -24,4 +24,7 @@ public class Constants {
     public static final String CANNOT_FIND_NEAREST_ACTIVE = "Нет ближайших активных заявок";
 
     public static final String LOGIN_UNTO_SAME_USER = "Войдите в систему с теми данными, под которыми совершали заказ";
+
+    public static final String USER_NOT_FOUND = "Пользователь не найден";
+    public static final String INCORRECT_REGISTRATION_DATA = "Неверные регистрацонные данные";
 }

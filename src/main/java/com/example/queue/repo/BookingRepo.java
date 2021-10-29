@@ -1,6 +1,8 @@
 package com.example.queue.repo;
 
 import com.example.queue.entity.Booking;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,6 +26,10 @@ public interface BookingRepo extends JpaRepository<Booking, Long> {
 
     // админ получает отсортированные по времени заявки от всех пользователей.
     // Нужна пагинация=======================================================================
+    @Query("select b from Booking b where b.status = 'unconfirmed' or b.status = 'confirmed'")
+    Page<Booking> findAllByStatusPageable(Pageable pageable);
+
+
     @Query("select b from Booking b where b.status = 'unconfirmed' or b.status = 'confirmed' order by b.bookingTime")
     List<Booking> findAllByStatus();
 

@@ -2,14 +2,16 @@ package com.example.queue.controller;
 
 import com.example.queue.dto.UserDto;
 import com.example.queue.entity.BookingTime;
-import com.example.queue.entity.CustomUserDetails;
 import com.example.queue.service.BookingService;
 import com.example.queue.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -21,15 +23,16 @@ public class UserController {
 
 
     @GetMapping
-    public UserDto getUserInfo() {
+    public String getUserInfo() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return userService.getUserDto(auth);
+        return userService.getUserDto(auth).toString();
     }
 
     @GetMapping(path = "/active-bookings")
-    public String getActiveBookings(){
+    public String getActiveBookings(@PageableDefault(sort = { "booking_time" }, direction = Sort.Direction.ASC)
+                                                Pageable pageable){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return bookingService.getAllActiveBooks(auth);
+        return bookingService.getAllActiveBooks(auth, pageable);
     }
 
     @PostMapping(path = "/create-book")

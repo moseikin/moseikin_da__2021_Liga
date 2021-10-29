@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -69,6 +71,17 @@ public class BookingService {
         }
     }
 
+    public boolean isBookingAvailable(BookingTime bookingTime, Timestamp timestamp){
+        // получаем timestamp начала и окончания рабочего дня
+        List<Timestamp> allBookings = ability.getAllTimeStampsThisDay(bookingTime);
+
+        // очередь пуста, можно записываться
+        if (allBookings.isEmpty()) {
+            return true;
+        }
+        return ability.isThereSpaceInQueue(timestamp, allBookings);
+    }
+
     private String insertBook(Timestamp timestamp, User user) {
         Booking booking = new Booking();
         booking.bookingTime(timestamp)
@@ -90,6 +103,7 @@ public class BookingService {
         executorService.schedule(()-> doAnnullingBook(bookId), millisToConfirm, TimeUnit.MINUTES);
     }
 
+    // анулирование неподтвержденного заказа
     public void doAnnullingBook(long bookId) {
         Booking booking = bookingRepo.findByBookId(bookId);
         if (booking != null){
@@ -101,18 +115,6 @@ public class BookingService {
         }
     }
 
-    public boolean isBookingAvailable(BookingTime bookingTime, Timestamp timestamp){
-        // получаем timestamp начала и окончания рабочего дня
-        List<Timestamp> allBookings = ability.getAllTimeStampsThisDay(bookingTime);
-
-        // очередь пуста, можно записываться
-        if (allBookings.isEmpty()) {
-            return true;
-        }
-
-        return ability.isThereSpaceInQueue(timestamp, allBookings);
-    }
-
     @Transactional
     public String deleteBook(Long bookId, Authentication auth) {
         Booking booking;
@@ -121,6 +123,7 @@ public class BookingService {
         } else {
             booking = bookingRepo.findByBookIdAndUserLogin(bookId, auth.getName());
         }
+
         if (booking != null) {
             return doRemoveBook(booking);
         } else {
@@ -134,29 +137,29 @@ public class BookingService {
     }
 
     public String getNearestBook() {
-//        Booking booking = bookingRepo.findFirstByBookingTime(new Timestamp(System.currentTimeMillis()));
-//        if (booking != null) {
-//            return booking.toString();
-//        }
-        List <BookingDto> bookings = doGetAllActiveBook();
-        for(BookingDto bookingDto : bookings) {
-            if (bookingDto.bookingTime().getTime() >= System.currentTimeMillis()) {
-                return bookingDto.toString();
-            }
+        Optional<BookingDto> optional = bookingRepo.findAllByStatus()
+                .stream()
+                .map(new BookingDto()::toBookingDto)
+                .findFirst()
+                .filter(bookingDto -> bookingDto.bookingTime().getTime() >= System.currentTimeMillis());
+        if (optional.isPresent()) {
+            return optional.get().toString();
+        } else {
+            return Constants.CANNOT_FIND_NEAREST_ACTIVE;
         }
-        return Constants.CANNOT_FIND_NEAREST_ACTIVE;
     }
 
-    public List<BookingDto> doGetAllActiveBook() {
-        return bookingRepo.findAllByStatus()
+    public List<BookingDto> doGetAllActiveBook(Pageable pageable) {
+
+        return bookingRepo.findAllByStatusPageable(pageable)
                 .stream()
                 .map(new BookingDto()::toBookingDto)
                 .collect(Collectors.toList());
     }
 
-    public String getAllActiveBooks(Authentication auth) {
+    public String getAllActiveBooks(Authentication auth, Pageable pageable) {
         if (auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-            return doGetAllActiveBook().toString();
+            return doGetAllActiveBook(pageable).toString();
         } else {
             return doGetUserActiveBookings(auth.getName());
         }

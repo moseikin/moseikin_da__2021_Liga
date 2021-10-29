@@ -4,6 +4,9 @@ import com.example.queue.service.AdminService;
 import com.example.queue.service.BookingService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -44,9 +47,9 @@ public class AdminController {
     }
 
     @GetMapping(path = "/active-bookings")
-    public String getAllBook(){
+    public String getAllBook(@PageableDefault(sort = "bookingTime", direction = Sort.Direction.ASC, size = 4) Pageable pageable){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        return bookingService.getAllActiveBooks(auth);
+        return bookingService.getAllActiveBooks(auth, pageable);
     }
 }

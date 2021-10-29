@@ -16,8 +16,7 @@ public class ScheduledService {
     private final BookingRepo bookingRepo;
 
     // проходим каждый час в рабочее время рабочих дней
-    // и анулируем неподтвержденные и подтвержденные заявки
-    // с прошедшей датой
+    // и анулируем неподтвержденные и подтвержденные заявки с прошедшей датой
     // с теми, где отмечено appeared и completed, не делаем ничего
     @Scheduled(cron = Constants.EVERY_HOUR_TOP_WORKING_DAYS)
     @Transactional

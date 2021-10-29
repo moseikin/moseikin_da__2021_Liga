@@ -1,26 +1,29 @@
 package com.example.queue.entity.request;
 
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.validation.constraints.NotEmpty;
 
 @Getter
 @Setter
 public class RegistrationRequest {
 
-    @NotEmpty
+    @NotBlank
     private String login;
 
-    @NotEmpty
+    @NotBlank
     private String password;
 
     @NotEmpty
     private String name;
 
-    @NotEmpty
+    @NotBlank
     private String lastname;
 
-    @NotEmpty
+    @NotBlank
+    @Email
     private String email;
 }

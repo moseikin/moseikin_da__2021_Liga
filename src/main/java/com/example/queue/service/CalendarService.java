@@ -37,12 +37,10 @@ public class CalendarService {
         long currentTime = System.currentTimeMillis();
         Calendar calendar = getCalendar(bookingTime);
         long orderTime = calendar.getTimeInMillis();
-
         return orderTime >= currentTime;
     }
 
     public boolean checkIsInScheduleBounds(BookingTime bookingTime) {
-
         Calendar calendar = getCalendar(bookingTime);
         long orderTime = calendar.getTimeInMillis();
         calendar = getWorkDayStartCalendar(calendar);
@@ -70,19 +68,13 @@ public class CalendarService {
 
 
     public boolean isThereSpaceInQueue(Timestamp timestamp, List<Timestamp> allBookings){
-
         // если заказ перед первым или после последнего, можно заказывать
-        if (timestamp.before(allBookings.get(0)) &&
-                ((allBookings.get(0).getTime() - timestamp.getTime()) >= queueParameters.timeForOrder())){
+        if ((allBookings.get(0).getTime() - timestamp.getTime()) >= queueParameters.timeForOrder() |
+                ((timestamp.getTime() - allBookings.get(allBookings.size() - 1).getTime()) >= queueParameters.timeForOrder())) {
             return true;
         }
 
-        if (timestamp.after(allBookings.get(allBookings.size() - 1)) &&
-                ((timestamp.getTime() - allBookings.get(allBookings.size() - 1).getTime()) >= queueParameters.timeForOrder())){
-            return true;
-        }
         // если заказ по времени в середине очереди
-        // находим, кто перед нами по времени
         int neighbourIndex1 = Integer.MAX_VALUE;
         int neighbourIndex2 = Integer.MAX_VALUE;
         long neighbourTime1 = Long.MAX_VALUE;
@@ -90,6 +82,8 @@ public class CalendarService {
 
         // ищем двух ближайших соседей по времени и их индексы в очереди
         for (int i = 0; i < allBookings.size(); i ++) {
+
+            // если элемент ближе по времени, чем время на заказ, то заказ сделать нельзя
             if (Math.abs(allBookings.get(i).getTime() - timestamp.getTime()) < queueParameters.timeForOrder()) {
                 return false;
             }
@@ -105,7 +99,6 @@ public class CalendarService {
             }
         }
         return Math.abs(neighbourTime2 - neighbourTime1) >= queueParameters.timeForOrder() * 2;
-
     }
 
     // продолжитеьность рабочего дня в миллисекундах
@@ -124,7 +117,6 @@ public class CalendarService {
         long startWorkDayMillis = getWorkDayStartCalendar(calendar).getTimeInMillis();
         Timestamp openingTimeStamp = new Timestamp(startWorkDayMillis);
         Timestamp closingTimestamp = new Timestamp(startWorkDayMillis + calcWorkDayInMillis());
-        System.out.println();
         // получаем заказы между этими двемя таймштампами, отсортированные по времени
         return bookingRepo.findAllBookingTime(openingTimeStamp, closingTimestamp);
     }

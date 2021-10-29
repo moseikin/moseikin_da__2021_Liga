@@ -21,7 +21,7 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-    implementation 'org.springframework.boot:spring-boot-starter-mustache'
+
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '2.5.5'
@@ -41,14 +41,15 @@ dependencies {
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'
 
-
-    // DTO
-    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.4'
-
     //token
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 
-    implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+    // validation
+
+//    implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: '7.0.1.Final'
+    implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.0'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.6'
+
 
     testImplementation 'org.awaitility:awaitility:3.1.2'
 

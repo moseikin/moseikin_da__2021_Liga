@@ -1,5 +1,6 @@
 package com.example.queue.service;
 
+import com.example.queue.Constants;
 import com.example.queue.config.JwtProvider;
 import com.example.queue.dto.UserDto;
 import com.example.queue.entity.RolesEnum;
@@ -42,12 +43,14 @@ public class UserService {
     // requst and responce убрать из сервиса
     public String logIn(AuthRequest request, HttpServletResponse response) {
         User user = findByLoginAndPassword(request.getLogin(), request.getPassword());
-        String token = jwtProvider.generateToken(user.login());
-        Cookie cookie = new Cookie("jwt", token);
-        cookie.setMaxAge(1296000);
-        response.addCookie(cookie);
-
-        return token;
+        if (user != null) {
+            String token = jwtProvider.generateToken(user.login());
+            Cookie cookie = new Cookie("jwt", token);
+            cookie.setMaxAge(1296000);
+            response.addCookie(cookie);
+            return token;
+        }
+        return Constants.USER_NOT_FOUND;
     }
 
     // requst убрать из сервиса
