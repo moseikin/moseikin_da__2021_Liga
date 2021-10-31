@@ -1,6 +1,6 @@
 package com.example.queue.dto;
 
-import com.example.queue.entity.Booking;
+import com.example.queue.entities.Booking;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

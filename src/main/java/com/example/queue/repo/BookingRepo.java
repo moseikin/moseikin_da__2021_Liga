@@ -1,6 +1,6 @@
 package com.example.queue.repo;
 
-import com.example.queue.entity.Booking;
+import com.example.queue.entities.Booking;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,7 +1,7 @@
 package com.example.queue.config;
 
-import com.example.queue.entity.CustomUserDetails;
-import com.example.queue.service.CustomUserDetailsService;
+import com.example.queue.entities.CustomUserDetails;
+import com.example.queue.services.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -27,4 +27,5 @@ public class Constants {
 
     public static final String USER_NOT_FOUND = "Пользователь не найден";
     public static final String INCORRECT_REGISTRATION_DATA = "Неверные регистрацонные данные";
+    public static final String INCORRECT_BOOKING_PARAMS = "Неверные параметры заказа";
 }

@@ -1,6 +1,6 @@
 package com.example.queue.dto;
 
-import com.example.queue.entity.User;
+import com.example.queue.entities.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
