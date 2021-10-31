@@ -194,7 +194,7 @@ public class BookingService {
     private String doGetUserActiveBookings(String name) {
         return bookingRepo.findAllByStatusAndUser(userRepo.getUserByLogin(name).id())
                 .stream()
-                .map(new BookingDto()::toBookingDto).toString();
+                .map(new BookingDto()::toBookingDto).collect(Collectors.toList()).toString();
     }
 
 
