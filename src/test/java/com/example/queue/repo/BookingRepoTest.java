@@ -1,8 +1,8 @@
 package com.example.queue.repo;
 
+import com.example.queue.TestEntities;
 import com.example.queue.entities.Booking;
 import com.example.queue.entities.User;
-import com.example.queue.entities.enums.StatusesEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +18,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @TestPropertySource(value = "/application-test.properties")
-@Sql(value = {"create-user-before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"create-user-after.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Sql(value = {"/create-user-before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/create-user-after.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class BookingRepoTest {
-    User user = new User();
-    Booking booking = new Booking();
+    TestEntities testEntities = new TestEntities();
     Timestamp timestamp = new Timestamp(System.currentTimeMillis() + 60000);
+    User user = testEntities.testUser();
+    Booking booking = testEntities.testBooking(timestamp, user);
+
 
     @Autowired
     BookingRepo bookingRepo;
@@ -34,18 +35,7 @@ class BookingRepoTest {
 
     @BeforeEach
     void setUp(@Autowired BookingRepo bookingRepo, @Autowired UserRepo userRepo){
-        user
-                .name("testUserName")
-                .lastName("testUserLastName")
-                .login("testUser")
-                .pass("testUser")
-                .eMail("testUser@testUser.ru")
-                .role("ROLE_USER");
         userRepo.save(user);
-
-        booking.bookingTime(timestamp)
-                .user(user)
-                .status(StatusesEnum.STATUS_UNCONFIRMED.getStatus());
         bookingRepo.save(booking);
     }
 

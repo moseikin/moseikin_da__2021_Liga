@@ -1,0 +1,2 @@
+DELETE FROM booking;
+DELETE FROM usr;
