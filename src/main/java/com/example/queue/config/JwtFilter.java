@@ -26,7 +26,10 @@ public class JwtFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         String tokenFromCookies = getTokenFromRequest((HttpServletRequest) servletRequest);
-        setAuthentication(tokenFromCookies);
+        if (tokenFromCookies != null) {
+            setAuthentication(tokenFromCookies);
+        }
+
 
         filterChain.doFilter(servletRequest, servletResponse);
     }

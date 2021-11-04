@@ -32,8 +32,9 @@ public class UserController {
     }
 
     @GetMapping(path = "/active-bookings")
-    public String getActiveBookings(@PageableDefault(sort = { "booking_time" }, direction = Sort.Direction.ASC)
-                                                Pageable pageable){
+    public String getActiveBookings(@PageableDefault(sort = { "booking_time" },
+                                    direction = Sort.Direction.ASC)
+                                    Pageable pageable){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return bookingService.getAllActiveBooks(auth, pageable);
     }

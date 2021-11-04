@@ -17,6 +17,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public CustomUserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         User user = userRepo.getUserByLogin(login);
+        if (user == null) {
+            user = new User();
+            user.login("null").name("null").lastName("null").pass("null").eMail("null").role("ROLE_USER");
+        }
+
         return CustomUserDetails.fromUserEntityToCustomUserDetails(user);
+
     }
 }

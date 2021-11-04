@@ -25,7 +25,6 @@ public interface BookingRepo extends JpaRepository<Booking, Long> {
 
 
     // админ получает отсортированные по времени заявки от всех пользователей.
-    // Нужна пагинация=======================================================================
     @Query("select b from Booking b where b.status = 'unconfirmed' or b.status = 'confirmed'")
     Page<Booking> findAllByStatusPageable(Pageable pageable);
 
@@ -37,11 +36,6 @@ public interface BookingRepo extends JpaRepository<Booking, Long> {
     @Query("select b from Booking b where (b.user.id = :userId) and " +
             "(b.status = 'unconfirmed' or b.status = 'confirmed') order by b.bookingTime")
     List<Booking> findAllByStatusAndUser(@Param("userId") long userId);
-
-
-    Booking findFirstByBookingTime(Timestamp timestamp);
-
-
 
 
 }
