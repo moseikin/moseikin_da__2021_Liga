@@ -105,6 +105,7 @@ public class BookingService {
     }
 
     // анулирование неподтвержденного заказа
+    @Transactional
     public void doAnnullingBook(long bookId) {
         Booking booking = bookingRepo.findByBookId(bookId);
         if (booking != null){

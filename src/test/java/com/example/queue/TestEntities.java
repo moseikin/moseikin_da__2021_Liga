@@ -20,6 +20,7 @@ public class TestEntities {
                 .role("ROLE_USER");
     }
 
+
     public Booking testBooking(Timestamp timestamp, User user){
         return new Booking()
                 .bookingTime(timestamp)
