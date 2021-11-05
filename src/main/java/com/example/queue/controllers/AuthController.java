@@ -47,14 +47,24 @@ public class AuthController {
         } else {
             User user = userService.findByLoginAndPassword(request.getLogin(), request.getPassword());
             if (user == null) {
+                putCookies(response, "");
                 return Constants.USER_NOT_FOUND;
             } else {
                 String token = jwtProvider.generateToken(user.login());
-                Cookie cookie = new Cookie("jwt", token);
-                cookie.setMaxAge(1296000);
-                response.addCookie(cookie);
+                putCookies(response, token);
                 return token;
             }
         }
+    }
+
+    private void putCookies(HttpServletResponse response, String token) {
+        Cookie cookie = new Cookie("jwt", token);
+        if (token.isBlank()) {
+            cookie.setMaxAge(0);
+        } else {
+            cookie.setMaxAge(1296000);
+        }
+
+        response.addCookie(cookie);
     }
 }

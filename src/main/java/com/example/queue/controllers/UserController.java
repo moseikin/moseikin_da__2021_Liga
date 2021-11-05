@@ -28,7 +28,7 @@ public class UserController {
     @GetMapping
     public String getUserInfo() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return userService.getUserDto(auth).toString();
+        return userService.getUserDto(auth);
     }
 
     @GetMapping(path = "/active-bookings")
@@ -60,6 +60,6 @@ public class UserController {
     @GetMapping(path = "/confirm-book")
     public String confirmBook(@RequestParam String userId, @RequestParam String bookId){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return bookingService.confirmBook(userId, bookId, auth.getName());
+        return bookingService.confirmBook(userId, bookId, auth);
     }
 }

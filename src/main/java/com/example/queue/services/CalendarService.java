@@ -76,31 +76,13 @@ public class CalendarService {
             return true;
         }
 
-        // если заказ по времени в середине очереди
-        int neighbourIndex1 = Integer.MAX_VALUE;
-        int neighbourIndex2 = Integer.MAX_VALUE;
-        long neighbourTime1 = Long.MAX_VALUE;
-        long neighbourTime2 = Long.MAX_VALUE;
-
-        // ищем двух ближайших соседей по времени и их индексы в очереди
-        for (int i = 0; i < allBookings.size(); i ++) {
-
-            // если элемент ближе по времени, чем время на заказ, то заказ сделать нельзя
-            if (Math.abs(allBookings.get(i).getTime() - timestamp.getTime()) < queueParameters.timeForOrder()) {
+        // if just one of all items nearer than timeForOrder, cant make book
+        for (Timestamp allBooking : allBookings) {
+            if (Math.abs(allBooking.getTime() - timestamp.getTime()) < queueParameters.timeForOrder()) {
                 return false;
             }
-            if (i != neighbourIndex2 &&
-                    Math.abs(allBookings.get(i).getTime() - timestamp.getTime()) >= queueParameters.timeForOrder()) {
-                neighbourTime1 = allBookings.get(i).getTime() - timestamp.getTime();
-                neighbourIndex1 = i;
-            }
-            if (i != neighbourIndex1 &&
-                    Math.abs(allBookings.get(i).getTime() - timestamp.getTime()) >= queueParameters.timeForOrder()) {
-                neighbourTime2 = allBookings.get(i).getTime() - timestamp.getTime();
-                neighbourIndex2 = i;
-            }
         }
-        return Math.abs(neighbourTime2 - neighbourTime1) >= queueParameters.timeForOrder() * 2;
+        return true;
     }
 
     // продолжитеьность рабочего дня в миллисекундах

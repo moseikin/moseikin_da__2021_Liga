@@ -211,7 +211,7 @@ class BookingServiceTest {
 
         initBooking();
 
-        String newStatus = bookingService.confirmBook(String.valueOf(user.id()), String.valueOf(booking.bookId()), auth.getName());
+        String newStatus = bookingService.confirmBook(String.valueOf(user.id()), String.valueOf(booking.bookId()), auth);
 
         assertThat(newStatus).isEqualTo(Constants.CONFIRMED);
     }
@@ -222,7 +222,7 @@ class BookingServiceTest {
 
         initBooking();
 
-        String newStatus = bookingService.confirmBook(String.valueOf(user.id()), String.valueOf(0), auth.getName());
+        String newStatus = bookingService.confirmBook(String.valueOf(user.id()), String.valueOf(0), auth);
 
         assertThat(newStatus).isEqualTo(Constants.CANNOT_FIND_BOOKING);
     }
@@ -237,7 +237,7 @@ class BookingServiceTest {
         wrongUser.login("wrong").pass("wrong").name("wrong").lastName("wrong").eMail("wrong@wrong.wrong").role(RolesEnum.USER.getRole());
         userRepo.save(wrongUser);
 
-        String newStatus = bookingService.confirmBook(String.valueOf(wrongUser.id()), String.valueOf(booking.bookId()), auth.getName());
+        String newStatus = bookingService.confirmBook(String.valueOf(wrongUser.id()), String.valueOf(booking.bookId()), auth);
 
         assertThat(newStatus).isEqualTo(Constants.LOGIN_UNTO_SAME_USER);
 

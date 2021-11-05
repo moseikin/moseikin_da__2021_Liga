@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum RolesEnum {
 
     USER("ROLE_USER"),
-    ADMIN("ROLE_ADMIN");
+    ADMIN("ROLE_ADMIN"),
+    DELETED("ROLE_DELETED");
 
     private final String role;
 

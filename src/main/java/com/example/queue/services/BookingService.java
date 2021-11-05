@@ -5,6 +5,7 @@ import com.example.queue.Constants;
 import com.example.queue.dto.BookingDto;
 import com.example.queue.entities.Booking;
 import com.example.queue.entities.BookingTime;
+import com.example.queue.entities.enums.RolesEnum;
 import com.example.queue.entities.enums.StatusesEnum;
 import com.example.queue.entities.User;
 import com.example.queue.repo.BookingRepo;
@@ -48,26 +49,31 @@ public class BookingService {
 
     @Transactional
     public String createBooking(BookingTime bookingTime, Authentication auth) {
-        // эта дата не в прошлом?
-        if (!calendarService.checkDateNotInPast(bookingTime)) {
-            return Constants.THIS_DAY_GONE;
-        }
-
-        // работаем в это время?
-       if (!calendarService.checkIsInScheduleBounds(bookingTime)){
-           return Constants.NOT_WORKING_TIME;
-       }
-
-        // преобразовать поля из сущности в timestamp
-       Timestamp timestamp = calendarService.bookingTimeToTimestamp(bookingTime);
-
-        // проверить, доступно ли время
-        if (isBookingAvailable(bookingTime, timestamp)) {
-            User user = userRepo.getUserByLogin(auth.getName());
-            String newBook = insertBook(timestamp, user);
-            return Constants.BOOKING_DONE + ": \n" + newBook;
+        if (auth.getAuthorities().contains(
+                new SimpleGrantedAuthority(RolesEnum.DELETED.getRole()))) {
+            return Constants.USER_NOT_FOUND;
         } else {
-            return Constants.THIS_TIME_OCCUPIED;
+            // эта дата не в прошлом?
+            if (!calendarService.checkDateNotInPast(bookingTime)) {
+                return Constants.THIS_DAY_GONE;
+            }
+
+            // работаем в это время?
+            if (!calendarService.checkIsInScheduleBounds(bookingTime)) {
+                return Constants.NOT_WORKING_TIME;
+            }
+
+            // преобразовать поля из сущности в timestamp
+            Timestamp timestamp = calendarService.bookingTimeToTimestamp(bookingTime);
+
+            // проверить, доступно ли время
+            if (isBookingAvailable(bookingTime, timestamp)) {
+                User user = userRepo.getUserByLogin(auth.getName());
+                String newBook = insertBook(timestamp, user);
+                return Constants.BOOKING_DONE + ": \n" + newBook;
+            } else {
+                return Constants.THIS_TIME_OCCUPIED;
+            }
         }
     }
 
@@ -119,17 +125,22 @@ public class BookingService {
 
     @Transactional
     public String deleteBook(Long bookId, Authentication auth) {
-        Booking booking;
-        if (auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-            booking = bookingRepo.findByBookId(bookId);
+        if (auth.getAuthorities().contains(
+                new SimpleGrantedAuthority(RolesEnum.DELETED.getRole()))) {
+            return Constants.USER_NOT_FOUND;
         } else {
-            booking = bookingRepo.findByBookIdAndUserLogin(bookId, auth.getName());
-        }
+            Booking booking;
+            if (auth.getAuthorities().contains(new SimpleGrantedAuthority(RolesEnum.ADMIN.getRole()))) {
+                booking = bookingRepo.findByBookId(bookId);
+            } else {
+                booking = bookingRepo.findByBookIdAndUserLogin(bookId, auth.getName());
+            }
 
-        if (booking != null) {
-            return doDeleteBook(booking);
-        } else {
-            return Constants.CANNOT_FIND_BOOKING;
+            if (booking != null) {
+                return doDeleteBook(booking);
+            } else {
+                return Constants.CANNOT_FIND_BOOKING;
+            }
         }
     }
 
@@ -159,31 +170,40 @@ public class BookingService {
     }
 
     public String getAllActiveBooks(Authentication auth, Pageable pageable) {
-        if (auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-            return doGetAllActiveBook(pageable).toString();
+        if (auth.getAuthorities().contains(
+                new SimpleGrantedAuthority(RolesEnum.DELETED.getRole()))) {
+            return Constants.USER_NOT_FOUND;
         } else {
-            return doGetUserActiveBookings(auth.getName());
+            if (auth.getAuthorities().contains(new SimpleGrantedAuthority(RolesEnum.ADMIN.getRole()))) {
+                return doGetAllActiveBook(pageable).toString();
+            } else {
+                return doGetUserActiveBookings(auth.getName());
+            }
         }
     }
 
     @Transactional
-    public String confirmBook(String userId, String bookId, String name) {
-        // id из письма и авторизованного юзера не совпадают
-        User user = userRepo.getUserByLogin(name);
-        if (!Long.valueOf(userId).equals(user.id())) {
-            return Constants.LOGIN_UNTO_SAME_USER;
-        }
-
-        Booking booking = bookingRepo.findByBookId(Long.parseLong(bookId));
-        if (booking == null) {
-            return Constants.CANNOT_FIND_BOOKING;
+    public String confirmBook(String userId, String bookId, Authentication auth) {
+        if (auth.getAuthorities().contains(
+                new SimpleGrantedAuthority(RolesEnum.DELETED.getRole()))) {
+                    return Constants.USER_NOT_FOUND;
         } else {
-            setConfirmed(booking);
-            // уведомление о том, что заявка подтверждена
-            notification.confirmed(booking);
-        }
+            // id из письма и авторизованного юзера не совпадают
+            User user = userRepo.getUserByLogin(auth.getName());
+            if (!Long.valueOf(userId).equals(user.id())) {
+                return Constants.LOGIN_UNTO_SAME_USER;
+            }
 
-        return Constants.CONFIRMED;
+            Booking booking = bookingRepo.findByBookId(Long.parseLong(bookId));
+            if (booking == null) {
+                return Constants.CANNOT_FIND_BOOKING;
+            } else {
+                setConfirmed(booking);
+                // уведомление о том, что заявка подтверждена
+                notification.confirmed(booking);
+            }
+            return Constants.CONFIRMED;
+        }
     }
 
     @Transactional
