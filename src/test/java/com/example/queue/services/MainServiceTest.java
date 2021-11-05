@@ -5,11 +5,9 @@ import com.example.queue.TestEntities;
 import com.example.queue.entities.Booking;
 import com.example.queue.entities.BookingTime;
 import com.example.queue.entities.User;
-import com.example.queue.entities.enums.StatusesEnum;
 import com.example.queue.repo.BookingRepo;
 import com.example.queue.repo.UserRepo;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +15,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestPropertySource(value = "/application-test.properties")
@@ -32,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MainServiceTest {
     Timestamp timestamp = new Timestamp(System.currentTimeMillis() + 60000);
     TestEntities testEntities = new TestEntities();
-    BookingTime bookingTime = new BookingTime();
+    BookingTime bookingTime = testEntities.getBookingTime();
     User user = testEntities.testUser();
     Booking booking = testEntities.testBooking(timestamp, user);
 
@@ -51,10 +45,7 @@ class MainServiceTest {
     @BeforeEach
     void setUp(){
         // hour and minutes = 0  - ищем за весь день
-        Calendar calendar = Calendar.getInstance();
-        bookingTime.setYear(calendar.get(Calendar.YEAR));
-        bookingTime.setMonth(calendar.get(Calendar.MONTH));
-        bookingTime.setDay(calendar.get(Calendar.DATE));
+
         bookingTime.setHour(0);
         bookingTime.setMinute(0);
 

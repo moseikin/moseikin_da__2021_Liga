@@ -21,6 +21,7 @@ public class EmailService implements Notification {
         long confirmTill = timeMillis + millisToConfirm;
         Time creationTime = new Time(timeMillis);
         Time timeToConfirm = new Time(confirmTill);
+
         System.out.println("http://localhost:8080/user/confirm-book?userId=" + booking.user().id() +
                                                 "&bookId=" + booking.bookId());
         System.out.println("Заказ создан в " + creationTime +

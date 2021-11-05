@@ -30,5 +30,12 @@ public class BookingTime {
     @Max(value = 59)
     private int minute;
 
-
+    @Override
+    public String toString() {
+        return "year=" + year +
+                ", month=" + month +
+                ", day=" + day +
+                ", hour=" + hour +
+                ", minute=" + minute;
+    }
 }

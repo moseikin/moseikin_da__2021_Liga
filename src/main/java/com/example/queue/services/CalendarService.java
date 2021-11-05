@@ -2,6 +2,7 @@ package com.example.queue.services;
 
 
 import com.example.queue.config.QueueParameters;
+import com.example.queue.entities.Booking;
 import com.example.queue.entities.BookingTime;
 import com.example.queue.repo.BookingRepo;
 import lombok.RequiredArgsConstructor;

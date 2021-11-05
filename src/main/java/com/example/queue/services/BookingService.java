@@ -40,7 +40,7 @@ public class BookingService {
     private final UserRepo userRepo;
     private final BookingRepo bookingRepo;
     private final ScheduledService scheduledService;
-    private final CalendarService ability;
+    private final CalendarService calendarService;
     private final Notification notification;
 
     @Value(value = "${millisToConfirm}")
@@ -49,17 +49,17 @@ public class BookingService {
     @Transactional
     public String createBooking(BookingTime bookingTime, Authentication auth) {
         // эта дата не в прошлом?
-        if (!ability.checkDateNotInPast(bookingTime)) {
+        if (!calendarService.checkDateNotInPast(bookingTime)) {
             return Constants.THIS_DAY_GONE;
         }
 
         // работаем в это время?
-       if (!ability.checkIsInScheduleBounds(bookingTime)){
+       if (!calendarService.checkIsInScheduleBounds(bookingTime)){
            return Constants.NOT_WORKING_TIME;
        }
 
         // преобразовать поля из сущности в timestamp
-       Timestamp timestamp = ability.bookingTimeToTimestamp(bookingTime);
+       Timestamp timestamp = calendarService.bookingTimeToTimestamp(bookingTime);
 
         // проверить, доступно ли время
         if (isBookingAvailable(bookingTime, timestamp)) {
@@ -72,14 +72,15 @@ public class BookingService {
     }
 
     public boolean isBookingAvailable(BookingTime bookingTime, Timestamp timestamp){
-        // получаем timestamp начала и окончания рабочего дня
-        List<Timestamp> allBookings = ability.getAllTimeStampsThisDay(bookingTime);
+
+        // список timestamp за весь день
+        List<Timestamp> allBookings = calendarService.getAllTimeStampsThisDay(bookingTime);
 
         // очередь пуста, можно записываться
         if (allBookings.isEmpty()) {
             return true;
         }
-        return ability.isThereSpaceInQueue(timestamp, allBookings);
+        return calendarService.isThereSpaceInQueue(timestamp, allBookings);
     }
 
     private String insertBook(Timestamp timestamp, User user) {
@@ -125,13 +126,13 @@ public class BookingService {
         }
 
         if (booking != null) {
-            return doRemoveBook(booking);
+            return doDeleteBook(booking);
         } else {
             return Constants.CANNOT_FIND_BOOKING;
         }
     }
 
-    public String doRemoveBook(Booking booking){
+    public String doDeleteBook(Booking booking){
         bookingRepo.delete(booking);
         return Constants.REMOVING_SUCCEED;
     }

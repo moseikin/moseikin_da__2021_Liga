@@ -42,11 +42,11 @@ public class User {
     @Column(name = "pass")
     private String pass;
 
-    @NotBlank
+    @NotBlank(message = "blank role")
     @Column(name = "role", length = 10)
     private String role;
 
-    @NotBlank
+    @NotBlank(message = "blank email")
     @Email(regexp = ".+@.+\\..+")
     @Column(name = "email", length = 50)
     private String eMail;
