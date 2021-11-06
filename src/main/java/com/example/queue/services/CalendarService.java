@@ -2,7 +2,6 @@ package com.example.queue.services;
 
 
 import com.example.queue.config.QueueParameters;
-import com.example.queue.entities.Booking;
 import com.example.queue.entities.BookingTime;
 import com.example.queue.repo.BookingRepo;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
 
@@ -85,7 +83,7 @@ public class CalendarService {
         return true;
     }
 
-    // продолжитеьность рабочего дня в миллисекундах
+    // продолжитльность рабочего дня в миллисекундах
     public Long calcWorkDayInMillis() {
         long hours = queueParameters.closingHour() - queueParameters.openHour();
         long minutes = queueParameters.closingMinute() - queueParameters.openMinutes();

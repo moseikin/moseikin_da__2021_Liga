@@ -1,5 +1,6 @@
 package com.example.queue.services;
 
+import com.example.queue.CommonTestMethods;
 import com.example.queue.Constants;
 import com.example.queue.TestEntities;
 import com.example.queue.config.JwtFilter;
@@ -8,7 +9,6 @@ import com.example.queue.entities.Booking;
 import com.example.queue.entities.BookingTime;
 import com.example.queue.entities.User;
 import com.example.queue.entities.enums.RolesEnum;
-import com.example.queue.entities.enums.StatusesEnum;
 import com.example.queue.repo.BookingRepo;
 import com.example.queue.repo.UserRepo;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql(value = {"/create-user-before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/create-user-after.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class AdminServiceTest {
+    CommonTestMethods methods = new CommonTestMethods();
     TestEntities testEntities = new TestEntities();
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
     User user = testEntities.testUser();
@@ -51,7 +52,6 @@ class AdminServiceTest {
     void setUp(){
         userRepo.save(user);
         booking = testEntities.testBooking(timestamp, user);
-//        bookingRepo.save(booking);
         admin = adminService.addAdmin();
         initAuth(admin.login());
         bookingTime = testEntities.getBookingTime();
@@ -114,13 +114,7 @@ class AdminServiceTest {
         newBooking = bookingService.createBooking(bookingTime, auth);
         timestamp = calendarService.bookingTimeToTimestamp(bookingTime);
         booking = testEntities.testBooking(timestamp, user);
-        booking.bookId(ejectId(newBooking));
-    }
-
-    Long ejectId(String source) {
-        int index = source.indexOf("=");
-        int index2 = source.indexOf(",");
-        return Long.parseLong(source.substring(index + 1, index2));
+        booking.bookId(methods.ejectId(newBooking));
     }
 
     void addTenMinutes() {

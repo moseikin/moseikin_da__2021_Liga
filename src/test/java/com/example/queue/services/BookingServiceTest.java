@@ -1,5 +1,6 @@
 package com.example.queue.services;
 
+import com.example.queue.CommonTestMethods;
 import com.example.queue.Constants;
 import com.example.queue.TestEntities;
 import com.example.queue.config.JwtFilter;
@@ -7,6 +8,7 @@ import com.example.queue.config.JwtProvider;
 import com.example.queue.dto.BookingDto;
 import com.example.queue.entities.Booking;
 import com.example.queue.entities.BookingTime;
+import com.example.queue.entities.CustomUserDetails;
 import com.example.queue.entities.User;
 import com.example.queue.entities.enums.RolesEnum;
 import com.example.queue.entities.enums.StatusesEnum;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.TestPropertySource;
@@ -33,11 +36,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @TestPropertySource(value = "/application-test.properties")
 @Sql(value = {"/create-user-before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//@Sql(value = {"/create-user-after.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(value = {"/create-user-after.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @PropertySource(value = {"classpath:queue.properties"})
 class BookingServiceTest {
+    CommonTestMethods methods = new CommonTestMethods();
     TestEntities testEntities = new TestEntities();
-    User user;;
+    User user;
     Booking booking;
     Authentication auth;
     BookingTime bookingTime;
@@ -62,6 +66,7 @@ class BookingServiceTest {
     @Autowired AdminService adminService;
     @Autowired ScheduledService scheduledService;
     @Autowired Notification notification;
+    @Autowired CustomUserDetailsService customUserDetailsService;
 
     @BeforeEach
     void setUp() {
@@ -78,7 +83,7 @@ class BookingServiceTest {
         newBooking = bookingService.createBooking(bookingTime, auth);
         timestamp = calendarService.bookingTimeToTimestamp(bookingTime);
         booking = testEntities.testBooking(timestamp, user);
-        booking.bookId(ejectId(newBooking));
+        booking.bookId(methods.ejectId(newBooking));
     }
 
     @AfterEach
@@ -94,6 +99,12 @@ class BookingServiceTest {
         addTenMinutes();
         initBooking();
         assertThat(newBooking).isEqualTo(Constants.BOOKING_DONE + ": \n" + booking);
+    }
+
+    @Test
+    void createBooking_ExpectUserNotFound() {
+        putRoleDeletedToUser();
+        assertThat(bookingService.createBooking(bookingTime, auth)).isEqualTo(Constants.USER_NOT_FOUND);
     }
 
     @Test
@@ -146,6 +157,12 @@ class BookingServiceTest {
     }
 
     @Test
+    void deleteBookAsUser_ExpectUserNotFound() {
+        putRoleDeletedToUser();
+        assertThat(bookingService.deleteBook(1L, auth)).isEqualTo(Constants.USER_NOT_FOUND);
+    }
+
+    @Test
     void deleteBookAsAdmin() {
         addTenMinutes();
         initBooking();
@@ -193,6 +210,15 @@ class BookingServiceTest {
     }
 
     @Test
+    void getAllActiveBooksAsUser_ExpectUserNotFound() {
+        Pageable pageable = Pageable.ofSize(3);
+        pageable.withPage(0);
+        putRoleDeletedToUser();
+
+        assertThat(bookingService.getAllActiveBooks(auth, pageable)).isEqualTo(Constants.USER_NOT_FOUND);
+    }
+
+    @Test
     void getAllActiveBooksAsAdmin() {
         addTenMinutes();
         initBooking();
@@ -208,12 +234,18 @@ class BookingServiceTest {
     @Test
     void confirmBook() {
         addTenMinutes();
-
         initBooking();
-
-        String newStatus = bookingService.confirmBook(String.valueOf(user.id()), String.valueOf(booking.bookId()), auth);
-
+        String newStatus = bookingService.confirmBook(String.valueOf(user.id()),
+                                                        String.valueOf(booking.bookId()),
+                                                        auth);
         assertThat(newStatus).isEqualTo(Constants.CONFIRMED);
+    }
+
+    @Test
+    void confirmBook_ExpectUserNotFound() {
+        putRoleDeletedToUser();
+        assertThat(bookingService.confirmBook(String.valueOf(user.id()),"1",auth))
+                .isEqualTo(Constants.USER_NOT_FOUND);
     }
 
     @Test
@@ -292,9 +324,12 @@ class BookingServiceTest {
         bookingTime.setMinute(bookingTime.getMinute() + 10);
     }
 
-    Long ejectId(String source) {
-        int index = source.indexOf("=");
-        int index2 = source.indexOf(",");
-        return Long.parseLong(source.substring(index + 1, index2));
+
+
+    void putRoleDeletedToUser(){
+        userRepo.delete(user);
+        CustomUserDetails customUserDetails = customUserDetailsService.loadUserByUsername(user.login());
+        auth = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 }
