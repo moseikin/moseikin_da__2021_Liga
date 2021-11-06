@@ -7,6 +7,7 @@ import com.example.queue.config.JwtProvider;
 import com.example.queue.dto.UserDto;
 import com.example.queue.entities.User;
 import com.example.queue.entities.enums.RolesEnum;
+import com.example.queue.entities.requests.AuthRequest;
 import com.example.queue.entities.requests.RegistrationRequest;
 import com.example.queue.repo.UserRepo;
 import org.junit.jupiter.api.AfterEach;
@@ -71,14 +72,15 @@ class UserServiceTest {
         String password = user.pass();
         user.pass(passwordEncoder.encode(password));
         userRepo.save(user);
-
-        User found = userService.findByLoginAndPassword(user.login(), password);
+        AuthRequest request = new AuthRequest().login(user.login()).password(password);
+        User found = userService.findByLoginAndPassword(request);
         assertThat(found).isNotNull();
     }
 
     @Test
     void findByLoginAndPassword_ExpectNull() {
-        User found = userService.findByLoginAndPassword("none", "none");
+        AuthRequest request = new AuthRequest().login("none").password("none");
+        User found = userService.findByLoginAndPassword(request);
         assertThat(found).isNull();
     }
 

@@ -14,7 +14,6 @@ import com.example.queue.entities.enums.RolesEnum;
 import com.example.queue.entities.enums.StatusesEnum;
 import com.example.queue.repo.BookingRepo;
 import com.example.queue.repo.UserRepo;
-import com.example.queue.services.interfaces.Notification;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,7 +64,6 @@ class BookingServiceTest {
     @Autowired CalendarService calendarService;
     @Autowired AdminService adminService;
     @Autowired ScheduledService scheduledService;
-    @Autowired Notification notification;
     @Autowired CustomUserDetailsService customUserDetailsService;
 
     @BeforeEach
@@ -99,6 +97,21 @@ class BookingServiceTest {
         addTenMinutes();
         initBooking();
         assertThat(newBooking).isEqualTo(Constants.BOOKING_DONE + ": \n" + booking);
+    }
+
+    @Test
+    void createBooking_WithNotEmptyQueue() {
+        addTenMinutes();
+        initBooking();
+
+        BookingTime bookingTime2 = bookingTime;
+        bookingTime2.setMinute(bookingTime.getMinute() + 20);
+        Booking booking2 = testEntities.testBooking(calendarService.bookingTimeToTimestamp(bookingTime2), user);
+        String secondBook = bookingService.createBooking(bookingTime2, auth);
+        booking2.bookId(methods.ejectId(secondBook));
+
+        assertThat(secondBook).isEqualTo(Constants.BOOKING_DONE + ": \n" + booking2);
+        bookingRepo.delete(booking2);
     }
 
     @Test

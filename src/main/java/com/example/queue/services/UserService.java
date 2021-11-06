@@ -4,6 +4,7 @@ import com.example.queue.Constants;
 import com.example.queue.dto.UserDto;
 import com.example.queue.entities.User;
 import com.example.queue.entities.enums.RolesEnum;
+import com.example.queue.entities.requests.AuthRequest;
 import com.example.queue.entities.requests.RegistrationRequest;
 import com.example.queue.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +29,10 @@ public class UserService {
         return new UserDto().toUserDto(userRepo.getUserByLogin(auth.getName())).toString();
     }
 
-    public User findByLoginAndPassword(String login, String password) {
-        User user = userRepo.getUserByLogin(login);
+    public User findByLoginAndPassword(AuthRequest request) {
+        User user = userRepo.getUserByLogin(request.login());
         if (user != null) {
-            if (passwordEncoder.matches(password, user.pass())) {
+            if (passwordEncoder.matches(request.password(), user.pass())) {
                 return user;
             }
         }

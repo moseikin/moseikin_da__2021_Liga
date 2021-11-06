@@ -45,7 +45,7 @@ public class AuthController {
         if (bindingResult.hasErrors()){
             return Constants.INCORRECT_REGISTRATION_DATA;
         } else {
-            User user = userService.findByLoginAndPassword(request.getLogin(), request.getPassword());
+            User user = userService.findByLoginAndPassword(request);
             if (user == null) {
                 putCookies(response, "");
                 return Constants.USER_NOT_FOUND;

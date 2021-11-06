@@ -68,12 +68,6 @@ public class CalendarService {
 
 
     public boolean isThereSpaceInQueue(Timestamp timestamp, List<Timestamp> allBookings){
-        // если заказ перед первым или после последнего, можно заказывать
-        if ((allBookings.get(0).getTime() - timestamp.getTime()) >= queueParameters.timeForOrder() |
-                ((timestamp.getTime() - allBookings.get(allBookings.size() - 1).getTime()) >= queueParameters.timeForOrder())) {
-            return true;
-        }
-
         // if just one of all items nearer than timeForOrder, cant make book
         for (Timestamp allBooking : allBookings) {
             if (Math.abs(allBooking.getTime() - timestamp.getTime()) < queueParameters.timeForOrder()) {
