@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-@Accessors(chain = true, fluent = true)
+// @Accessors causes InvalidDefinitionException: No serializer found for class
 public class AuthRequest {
 
     @NotBlank

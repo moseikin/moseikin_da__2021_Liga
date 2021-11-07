@@ -13,16 +13,16 @@ class AuthRequestTest {
 
     @Test
     void testLogin() {
-        assertThat(request.login()).isNull();
-        request.login("testName");
-        assertThat(request.login()).isEqualTo("testName");
+        assertThat(request.getLogin()).isNull();
+        request.setLogin("testName");
+        assertThat(request.getLogin()).isEqualTo("testName");
     }
 
     @Test
     void testPassword() {
-        assertThat(request.password()).isNull();
-        request.password("testName");
-        assertThat(request.password()).isEqualTo("testName");
+        assertThat(request.getPassword()).isNull();
+        request.setPassword("testName");
+        assertThat(request.getPassword()).isEqualTo("testName");
     }
 
 }

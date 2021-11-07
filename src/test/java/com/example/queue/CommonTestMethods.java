@@ -7,4 +7,6 @@ public class CommonTestMethods {
         int index2 = source.indexOf(",");
         return Long.parseLong(source.substring(index + 1, index2));
     }
+
+
 }

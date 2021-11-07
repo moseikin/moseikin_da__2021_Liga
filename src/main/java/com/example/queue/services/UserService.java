@@ -30,9 +30,9 @@ public class UserService {
     }
 
     public User findByLoginAndPassword(AuthRequest request) {
-        User user = userRepo.getUserByLogin(request.login());
+        User user = userRepo.getUserByLogin(request.getLogin());
         if (user != null) {
-            if (passwordEncoder.matches(request.password(), user.pass())) {
+            if (passwordEncoder.matches(request.getPassword(), user.pass())) {
                 return user;
             }
         }

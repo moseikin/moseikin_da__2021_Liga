@@ -72,14 +72,18 @@ class UserServiceTest {
         String password = user.pass();
         user.pass(passwordEncoder.encode(password));
         userRepo.save(user);
-        AuthRequest request = new AuthRequest().login(user.login()).password(password);
+        AuthRequest request = new AuthRequest();
+        request.setLogin(user.login());
+        request.setPassword(password);
         User found = userService.findByLoginAndPassword(request);
         assertThat(found).isNotNull();
     }
 
     @Test
     void findByLoginAndPassword_ExpectNull() {
-        AuthRequest request = new AuthRequest().login("none").password("none");
+        AuthRequest request = new AuthRequest();
+        request.setLogin("none");
+        request.setPassword("none");
         User found = userService.findByLoginAndPassword(request);
         assertThat(found).isNull();
     }
