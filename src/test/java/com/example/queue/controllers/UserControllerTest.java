@@ -92,14 +92,8 @@ class UserControllerTest {
 
     @Test
     void createBook() throws Exception{
-        Calendar calendar = Calendar.getInstance();
-        BookingTime bookingTime = new BookingTime();
-        bookingTime.setYear(calendar.get(Calendar.YEAR));
-        bookingTime.setMonth(calendar.get(Calendar.MONTH));
-        // it must be working time and not the past
-        bookingTime.setDay(calendar.get(Calendar.DATE) + 1);
-        bookingTime.setHour(12);
-        bookingTime.setMinute(0);
+        BookingTime bookingTime = testEntities.getBookingTime();
+
         booking.bookingTime(calendarService.bookingTimeToTimestamp(bookingTime));
 
         String requestBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(bookingTime);

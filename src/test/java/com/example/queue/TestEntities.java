@@ -30,14 +30,13 @@ public class TestEntities {
 
     public BookingTime getBookingTime(){
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
         BookingTime bookingTime = new BookingTime();
         bookingTime.setYear(calendar.get(Calendar.YEAR));
         bookingTime.setMonth(calendar.get(Calendar.MONTH));
-        bookingTime.setDay(calendar.get(Calendar.DATE));
-        bookingTime.setHour(calendar.get(Calendar.HOUR_OF_DAY));
-        bookingTime.setMinute(calendar.get(Calendar.MINUTE));
+        // it must be working time and not the past
+        bookingTime.setDay(calendar.get(Calendar.DATE) + 1);
+        bookingTime.setHour(12);
+        bookingTime.setMinute(0);
         return bookingTime;
     }
 }

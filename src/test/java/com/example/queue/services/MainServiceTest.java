@@ -24,28 +24,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql(value = {"/before-test.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/after-test.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class MainServiceTest {
-    Timestamp timestamp = new Timestamp(System.currentTimeMillis() + 60000);
     TestEntities testEntities = new TestEntities();
     BookingTime bookingTime = testEntities.getBookingTime();
     User user = testEntities.testUser();
-    Booking booking = testEntities.testBooking(timestamp, user);
+    Booking booking;
 
-    @Autowired
-    MainService mainService;
-
-    @Autowired
-    UserRepo userRepo;
-
-    @Autowired
-    BookingRepo bookingRepo;
-
-    @Autowired
-    CalendarService calendarService;
+    @Autowired MainService mainService;
+    @Autowired UserRepo userRepo;
+    @Autowired BookingRepo bookingRepo;
+    @Autowired CalendarService calendarService;
 
     @BeforeEach
     void setUp(){
         // hour and minutes = 0  - ищем за весь день
-
+        Timestamp timestamp = calendarService.bookingTimeToTimestamp(bookingTime);
+        booking = testEntities.testBooking(timestamp, user);
         bookingTime.setHour(0);
         bookingTime.setMinute(0);
 
@@ -54,7 +47,7 @@ class MainServiceTest {
     }
 
     @Test
-    void getThisDayBookings_QUEUE_IS_FREE() {
+    void getThisDayBookings_ExpectQueueIsFree() {
         // смотрим следующий день
         bookingTime.setDay(bookingTime.getDay() + 1);
         String bookings = mainService.getThisDayBookings(bookingTime);
@@ -62,7 +55,7 @@ class MainServiceTest {
     }
 
     @Test
-    void getThisDayBookings_RETURNS_TIMESTAMPS(){
+    void getThisDayBookings_ExpectTimestamps(){
         String bookings = mainService.getThisDayBookings(bookingTime);
         assertThat(bookings.substring(1, bookings.length() - 1)).isEqualTo(booking.bookingTime().toString());
     }

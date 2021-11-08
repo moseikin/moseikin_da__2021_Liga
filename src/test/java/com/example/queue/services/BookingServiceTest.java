@@ -50,6 +50,9 @@ class BookingServiceTest {
     @Value(value = "${closingHour}")
     int closingHour;
 
+    @Value(value = "${openHour}")
+    int openHour;
+
     @Value(value = "${millisToConfirm}")
     Integer millisToConfirm;
 
@@ -75,6 +78,7 @@ class BookingServiceTest {
         initAuth(user.login());
 
         bookingTime = testEntities.getBookingTime();
+
     }
 
     void initBooking(){
@@ -122,16 +126,24 @@ class BookingServiceTest {
 
     @Test
     void createBooking_ExpectThisDayGone() {
-        // reduce 10 minutes to sure book is in past
-        bookingTime.setMinute(bookingTime.getMinute() - 10);
+        // reduce 2 days to sure book is in past
+        bookingTime.setDay(bookingTime.getDay() - 2);
 
         assertThat(bookingService.createBooking(bookingTime, auth)).isEqualTo(Constants.THIS_DAY_GONE);
     }
 
     @Test
-    void createBooking_ExpectNotWorkingTime() {
+    void createBooking_ExpectNotWorkingTimeDayAlreadyEnds() {
         // add 1 hour to book to not working time
         bookingTime.setHour(closingHour + 1);
+
+        assertThat(bookingService.createBooking(bookingTime, auth)).isEqualTo(Constants.NOT_WORKING_TIME);
+    }
+
+    @Test
+    void createBooking_ExpectNotWorkingTimeStillClosed() {
+        // add 1 hour to book to not working time
+        bookingTime.setHour(openHour - 1);
 
         assertThat(bookingService.createBooking(bookingTime, auth)).isEqualTo(Constants.NOT_WORKING_TIME);
     }
