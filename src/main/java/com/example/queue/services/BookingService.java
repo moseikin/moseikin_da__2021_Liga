@@ -11,6 +11,7 @@ import com.example.queue.entities.User;
 import com.example.queue.repo.BookingRepo;
 import com.example.queue.repo.UserRepo;
 import com.example.queue.services.interfaces.Notification;
+import com.example.queue.services.rabbitmq.RabbitMqProducerService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -43,6 +44,7 @@ public class BookingService {
     private final ScheduledService scheduledService;
     private final CalendarService calendarService;
     private final Notification notification;
+    private final RabbitMqProducerService producerService;
 
     @Value(value = "${millisToConfirm}")
     private Long millisToConfirm;
@@ -101,6 +103,10 @@ public class BookingService {
 
         // анулирование неподтвержденной заявки
         delayedAnnulling(booking.bookId());
+
+        //отправляем отложенное сообщение в RabbitMq для дополнительного контроля: если scheduler не сработает,
+        // то rabbit по истечении срока на подтверждение обнулит неподтвержденную заявку
+        producerService.sendOrder(String.valueOf(booking.bookId()));
 
         return booking.toString();
     }

@@ -3,6 +3,7 @@ package com.example.queue.config;
 import com.example.queue.entities.CustomUserDetails;
 import com.example.queue.services.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -18,18 +19,21 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class JwtFilter extends GenericFilterBean {
+@Log
+public class JwtFilter extends GenericFilterBean
+{
+
 
     private final JwtProvider jwtProvider;
     private final CustomUserDetailsService customUserDetailsService;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+
         String tokenFromCookies = getTokenFromRequest((HttpServletRequest) servletRequest);
         if (tokenFromCookies != null) {
             setAuthentication(tokenFromCookies);
         }
-
 
         filterChain.doFilter(servletRequest, servletResponse);
     }
@@ -52,7 +56,7 @@ public class JwtFilter extends GenericFilterBean {
                 };
             }
         }
-        return ""; // ошибка аутентификации. Должно быть перенаправление на auth page
-
+        return "";
     }
+
 }

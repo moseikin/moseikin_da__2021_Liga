@@ -2,6 +2,7 @@ package com.example.queue.services;
 
 import com.example.queue.entities.Booking;
 import com.example.queue.services.interfaces.Notification;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import java.text.SimpleDateFormat;
 
 @Service
 @PropertySource(value = {"classpath:queue.properties"})
+@RequiredArgsConstructor
 public class EmailService implements Notification {
     @Value(value = "${millisToConfirm}")
     private Long millisToConfirm;
@@ -22,11 +24,15 @@ public class EmailService implements Notification {
         Time creationTime = new Time(timeMillis);
         Time timeToConfirm = new Time(confirmTill);
 
-        System.out.println("http://localhost:8080/user/confirm-book?userId=" + booking.user().id() +
-                                                "&bookId=" + booking.bookId());
-        System.out.println("Заказ создан в " + creationTime +
+        String confirmationLink = "http://localhost:8080/user/confirm-book?userId=" + booking.user().id() +
+                "&bookId=" + booking.bookId();
+        System.out.println(confirmationLink);
+
+        String body = "Заказ создан в " + creationTime +
                 "\nПодтвердите ваш заказ до " + timeToConfirm +
-                ", иначе ваш заказ будет анулирован");
+                ", иначе ваш заказ будет анулирован";
+        System.out.println(body);
+
     }
 
     @Override
@@ -40,4 +46,6 @@ public class EmailService implements Notification {
     public void annulled(Booking booking) {
         System.out.println("Ваш заказ анулирован");
     }
+
+
 }

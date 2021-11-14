@@ -14,3 +14,10 @@ services:
       POSTGRES_PASSWORD: postgres
       PG_DATA: /var/lib/postgresql/data/db-files/
     restart: always
+
+  rabbit:
+    image: rabbitmq:3.8.8
+    container_name: rebe
+    ports:
+      - "5672:5672"
+      - "15672:15672"
