@@ -9,8 +9,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.Cookie;
-
 @Component
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
@@ -33,4 +31,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         return CustomUserDetails.fromUserEntityToCustomUserDetails(user);
 
     }
+
+
 }

@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtFilter jwtFilter;
+    private final CustomAuthenticationProvider authProvider;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -32,8 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/user/*").hasRole("USER")
                     .antMatchers("/register", "/auth").permitAll()
                 .and()
+                    .authenticationProvider(authProvider)
                     .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        ;
       }
-
 }

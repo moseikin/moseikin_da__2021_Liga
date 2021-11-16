@@ -20,8 +20,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 @Log
-public class JwtFilter extends GenericFilterBean
-{
+public class JwtFilter extends GenericFilterBean{
 
 
     private final JwtProvider jwtProvider;
@@ -58,5 +57,4 @@ public class JwtFilter extends GenericFilterBean
         }
         return "";
     }
-
 }
