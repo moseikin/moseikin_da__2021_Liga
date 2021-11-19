@@ -48,7 +48,6 @@ public class UserController {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             return bookingService.createBooking(bookingTime, auth);
         }
-
     }
 
     @PostMapping(path = "/delete-book")
