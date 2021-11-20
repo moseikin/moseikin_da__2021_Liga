@@ -40,7 +40,7 @@ public class AuthController {
 
     @PostMapping("/auth")
     @ApiOperation("Returns token")
-    public String auth(@RequestBody @Valid AuthRequest request, BindingResult bindingResult,
+    public String auth(@RequestBody(required = false) @Valid AuthRequest request, BindingResult bindingResult,
                          HttpServletResponse response) {
         if (bindingResult.hasErrors()){
             return Constants.INCORRECT_REGISTRATION_DATA;

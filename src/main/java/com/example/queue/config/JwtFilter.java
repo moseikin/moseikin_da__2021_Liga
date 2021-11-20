@@ -1,16 +1,17 @@
 package com.example.queue.config;
 
 import com.example.queue.Constants;
-import com.example.queue.utils.MultiReadHttpServletRequest;
 import com.example.queue.entities.CustomUserDetails;
 import com.example.queue.entities.User;
 import com.example.queue.entities.requests.AuthRequest;
 import com.example.queue.services.CustomUserDetailsService;
 import com.example.queue.services.UserService;
-import com.google.gson.Gson;
+import com.example.queue.utils.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -20,80 +21,52 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class JwtFilter extends GenericFilterBean{
+public class JwtFilter extends GenericFilterBean {
     private final JwtProvider jwtProvider;
     private final CustomUserDetailsService customUserDetailsService;
     private final UserService userService;
 
+    private final RequestMatcher authRequestMatcher = new AntPathRequestMatcher("/auth");
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws ServletException, IOException {
-        // тело запроса может быть прочитано единожды, после чего оно теряется и не доходит до контроллера
-        // решение: враппер, который копирует inputstream to outputstream
-        // таким образом будем работать со вторым
-        MultiReadHttpServletRequest multiReadRequest = new MultiReadHttpServletRequest((HttpServletRequest) servletRequest);
+        if (authRequestMatcher.matches((HttpServletRequest) servletRequest)) {
+            // если ulr - страница аутентификации ("/auth"), ищем  логин и пароль в теле запроса.
+            // в контроллере @RequestBody (required = false) AuthRequest request - т.к. тело до контроллера не дойдет
+            AuthRequest authRequest = new JsonUtil().getAuthRequest(servletRequest.getInputStream());
 
-        // ищем в запросе логин и пароль
-        boolean isSucceed = parseRequestForAuthData(multiReadRequest.getInputStream(), servletResponse);
-
-        // если в запросе нет логина и пароля либо user не найден
-        if (!isSucceed) {
-            // ищем в запросе токен
-            HttpServletRequest request = (HttpServletRequest) multiReadRequest.getRequest();
-            String tokenFromRequest = request.getHeader(Constants.AUTHORIZATION);
+            // из AuthRequest берем логин и пароль и ищем в БД.
+            // Если нашли, генерируем токен. Если нет, возвращаем пустую строку
+            String token = createToken(authRequest);
+            if (!token.isBlank()){
+                setAuthentication(token);
+                putTokenToHeader(token, servletResponse);
+            }
+        } else {
+            // для любой другой страницы ищем токен в заголовках запроса
+            String tokenFromRequest = ((HttpServletRequest) servletRequest).getHeader(Constants.AUTHORIZATION);
             if (tokenFromRequest != null) {
                 setAuthentication(tokenFromRequest);
             }
         }
-        filterChain.doFilter(multiReadRequest, servletResponse);
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    private boolean parseRequestForAuthData(InputStream inputStream, ServletResponse servletResponse) {
-        try {
-            StringBuilder stringBuilder = new StringBuilder();
-            Reader reader = new BufferedReader(new InputStreamReader(inputStream, Charset.forName(StandardCharsets.UTF_8.name())));
-            int c = 0;
-            while ((c = reader.read()) != -1) {
-                stringBuilder.append((char) c);
+    private String createToken(AuthRequest authRequest) {
+        if (authRequest != null) {
+            User user = userService.findByLoginAndPassword(authRequest);
+            if (user != null) {
+                return jwtProvider.generateToken(user.login());
             }
-            Gson gson = new Gson();
-            AuthRequest authRequest = gson.fromJson(String.valueOf(stringBuilder), AuthRequest.class);
-            if (authRequest != null) {
-                User user = userService.findByLoginAndPassword(authRequest);
-
-                if(user != null) {
-                    String token = jwtProvider.generateToken(user.login());
-                    setAuthentication(token);
-
-                    putTokenToResponseBody(token, servletResponse);
-                    putTokenToHeader(token, servletResponse);
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } catch (IOException e) {
-            return false;
         }
+        return "";
     }
 
-    // добавить токен в тело ответа
-    private void putTokenToResponseBody(String token, ServletResponse servletResponse) throws IOException {
-        byte[] bytes = token.getBytes(StandardCharsets.UTF_8);
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.getOutputStream().write(bytes);
-        response.getOutputStream().flush();
-    }
-
-    // добавить токен в заголовки ответа. Выбрать что-то одно
+    // добавить токен в заголовки ответа
     private void putTokenToHeader(String token, ServletResponse servletResponse) {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         response.addHeader(Constants.AUTHORIZATION, token);

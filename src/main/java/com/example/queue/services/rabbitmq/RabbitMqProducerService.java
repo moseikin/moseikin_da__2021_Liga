@@ -1,6 +1,5 @@
 package com.example.queue.services.rabbitmq;
 
-import com.example.queue.config.RabbitMqConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +25,6 @@ public class RabbitMqProducerService {
 
     public void sendOrder(String orderId) {
         template.convertAndSend(orderExchange, orderQueue, orderId, message -> {
-            System.out.println("Время отправки сообщения: " + System.currentTimeMillis());
             message.getMessageProperties().setExpiration(String.valueOf(millisToConfirm));
             return message;
         });
