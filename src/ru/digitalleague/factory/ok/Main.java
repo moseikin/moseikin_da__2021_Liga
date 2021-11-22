@@ -25,7 +25,7 @@ public class Main {
         String notificationChosen = chooseNotification();
         printAvailableSources();
         NotificationFactory notificationFactory = notificationFactory();
-        Notification notification = new SimpleNotification(user, notificationChosen, notificationFactory);
+        Notification notification = new SimpleNotification(user, notificationChosen, notificationFactory.makeNotification());
 
         sendNotification(notification);
 
